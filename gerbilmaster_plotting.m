@@ -15,7 +15,7 @@ num_erps_removed = zeros(size(curr_subject_ID,1));
 
 noise_thresh = 100;
 
-EEG_struct_for_topographies = load('7002all_epoch.mat');
+EEG_struct_for_topographies = load('7023all_epoch.mat');
 EEG_struct_for_topographies = EEG_struct_for_topographies.EEG;
 
 
@@ -210,6 +210,29 @@ this_scrambled_data = squeeze(mean(all_unscrambled_by_color_onset(:,frontocentra
 this_unscrambled_data = squeeze(mean(all_unscrambled_by_object_onset(:,frontocentral_channels,:),2));
 shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
 shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-m'})
+ylim([-3.5,3.5])
+title('Uncrambled')
+legend({'Color','Object'})
+
+
+%% Color vs. object individual subbies
+figure;
+subplot(1,2,1)
+hold on
+this_scrambled_data = squeeze(mean(all_scrambled_by_color_onset(:,frontocentral_channels,:),2));
+this_unscrambled_data = squeeze(mean(all_scrambled_by_object_onset(:,frontocentral_channels,:),2));
+plot(single_onset_time,this_scrambled_data,'-g')
+plot(single_onset_time,this_unscrambled_data,'-m')
+ylim([-3.5,3.5])
+title('Scrambled')
+legend({'Color','Object'})
+
+subplot(1,2,2)
+hold on
+this_scrambled_data = squeeze(mean(all_unscrambled_by_color_onset(:,frontocentral_channels,:),2));
+this_unscrambled_data = squeeze(mean(all_unscrambled_by_object_onset(:,frontocentral_channels,:),2));
+plot(single_onset_time,this_scrambled_data,'-g')
+plot(single_onset_time,this_unscrambled_data,'-m')
 ylim([-3.5,3.5])
 title('Uncrambled')
 legend({'Color','Object'})
