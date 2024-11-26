@@ -3,8 +3,8 @@
 % Author: Benjamin Richards
 % 09/16/2024
 
-curr_subject_ID =  char('7023','7024','7033','7035','7036','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050');%char('7002','7004','7007','7008','7010','7023','7024','7033','7035','7036','7038','7039','7040');
-% 
+curr_subject_ID =  char('7023','7024','7033','7035','7036','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7051','7052');%char('7002','7004','7007','7008','7010','7023','7024','7033','7035','7036','7038','7039','7040');
+%curr_subject_ID = char('7053','7054');
 all_scrambled_by_color_onset = [];
 all_scrambled_by_object_onset = [];
 all_scrambled_by_masker_onset = [];
@@ -15,7 +15,7 @@ num_erps_removed = zeros(size(curr_subject_ID,1));
 
 noise_thresh = 100;
 
-EEG_struct_for_topographies = load('7023all_epoch.mat');
+EEG_struct_for_topographies = load('D:\prepro_epoched_data\7023all_epoch.mat');
 EEG_struct_for_topographies = EEG_struct_for_topographies.EEG;
 
 
@@ -60,7 +60,8 @@ for isubject = 1:size(curr_subject_ID,1)
     button_press_delay = 0;
     single_onset_time = linspace(erp_window_start_time,erp_window_end_time,size(data_by_target_onset_baselined,2));
     single_onset_time_buttonpress = linspace(erp_window_start_time + button_press_delay,erp_window_end_time,size(data_by_button_press_baselined,2));
-    frontocentral_channels = [31,32];%[1,2,4,5,6,8,9,23,25,26,27,29,31,32];
+    frontocentral_channels = [1,2,4,5,6,8,9,23,25,26,27,29,31,32];
+    parietooccipital_channels = 11:20;
     
     % Plot all individual word ERPs for this subject
 %     figure;
@@ -193,6 +194,7 @@ shadedErrorBar(single_onset_time_buttonpress,mean(this_data,1),std(this_data,[],
 title('Button Press','FontSize',18)
 
 %% Color vs. object within each condition
+% Frontocentral
 figure;
 subplot(1,2,1)
 hold on
@@ -201,8 +203,8 @@ this_unscrambled_data = squeeze(mean(all_scrambled_by_object_onset(:,frontocentr
 shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
 shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-m'})
 ylim([-3.5,3.5])
-title('Scrambled')
-legend({'Color','Object'})
+title('Scrambled','FontSize',20)
+legend({'Color','Object'},'FontSize',20)
 
 subplot(1,2,2)
 hold on
@@ -211,9 +213,34 @@ this_unscrambled_data = squeeze(mean(all_unscrambled_by_object_onset(:,frontocen
 shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
 shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-m'})
 ylim([-3.5,3.5])
-title('Uncrambled')
-legend({'Color','Object'})
+title('Unscrambled','FontSize',20)
+legend({'Color','Object'},'FontSize',20)
 
+sgtitle('Frontocentral ERP','FontSize',20)
+
+% Parietooccipital
+figure;
+subplot(1,2,1)
+hold on
+this_scrambled_data = squeeze(mean(all_scrambled_by_color_onset(:,parietooccipital_channels,:),2));
+this_unscrambled_data = squeeze(mean(all_scrambled_by_object_onset(:,parietooccipital_channels,:),2));
+shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
+shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-m'})
+ylim([-3.5,3.5])
+title('Scrambled','FontSize',20)
+legend({'Color','Object'},'FontSize',20)
+
+subplot(1,2,2)
+hold on
+this_scrambled_data = squeeze(mean(all_unscrambled_by_color_onset(:,parietooccipital_channels,:),2));
+this_unscrambled_data = squeeze(mean(all_unscrambled_by_object_onset(:,parietooccipital_channels,:),2));
+shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
+shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-m'})
+ylim([-3.5,3.5])
+title('Unscrambled','FontSize',20)
+legend({'Color','Object'},'FontSize',20)
+
+sgtitle('Parietooccipital ERP','FontSize',20)
 
 %% Color vs. object individual subbies
 figure;
@@ -244,7 +271,7 @@ cmin = -3.5;
 cmax = 2;
 fs = 2048;
 
-EEG_struct_for_topographies = EEG_struct_for_topographies.EEG;
+%EEG_struct_for_topographies = EEG_struct_for_topographies.EEG;
 
 topoplot_indices = round(0:0.05*fs:(((erp_window_end_time - erp_window_start_time)/1000)*fs));
 topoplot_indices(1) = 1;

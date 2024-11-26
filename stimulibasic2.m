@@ -484,10 +484,10 @@ while trial <= numtrials
     end
     
     %% Scramble masker sound if necessary
-%     if (scramblingindex == 1)
-%         newMaskerSound = scrambling(newMaskerSound, fs);
-%     end
-     newMaskerSound = newMaskerSound'; % transpose the array
+    if (scramblingindex == 1)
+        newMaskerSound = scrambling(newMaskerSound, fs);
+    end
+    newMaskerSound = newMaskerSound'; % transpose the array
 %     
 
     %% Create target sound

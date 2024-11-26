@@ -20,7 +20,7 @@ else
     dir_fnirsandgerbils = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
 end
 
-curr_subject_ID = char('7023','7024');% char('7033','7035','7036','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050');%char('7002','7004','7007','7008','7010','7023','7024','7033','7035','7036','7038','7039','7040');
+curr_subject_ID = char('7054');%;char('7023','7024','7033','7035','7036','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050');%char('7002','7004','7007','7008','7010','7023','7024','7033','7035','7036','7038','7039','7040');
 % ,
 % Set analysis parameters
 erp_window_start_time = -100; % 100 ms before onset of word
@@ -85,7 +85,7 @@ for isubject = 1:size(curr_subject_ID,1)
     noise_thresh = 100; % 80;
 
     for itrial = 1:size(this_EEG.data,3)% for each trial (should be 144)
-        if mod(40,itrial) == 0 
+        if mod(itrial,40) == 0 
             disp(itrial)
         end
         icondition = conditions(itrial);

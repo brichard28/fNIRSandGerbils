@@ -1,10 +1,10 @@
 % Primary Authors: Victoria Figarola, Benjamin Richardson 7/21/23
 % Secondary Authors: Emaya Anand, Maanasa Guru Adimurthy
 % EPOCHING
-subID = ['7045']; % set current subject ID
+subID = ['7054']; % set current subject ID
 
 % Set directories
-whos_using = 'Maa';
+whos_using = 'Bon';
 
 if whos_using == 'Ben'
     addpath('/home/ben/Documents/MATLAB/eeglab2023.1/')
@@ -115,7 +115,7 @@ EEG.urevent(urevents_to_remove) = [];
 % proper trigger types (sst = 18687, ust = 35327, sdt = 44031, udt = 11007)
 % Rename triggers to 4 distinct types (one for each condition)
 if double(string(subID)) >= 7023
-    fNIRSandGerbilsXL = 'C:/Users/maana/Documents/GitHub/fNIRSandGerbils/data/fNIRSandGerbils.xlsx';
+    fNIRSandGerbilsXL = 'D:\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
     all_click_info = readtable(fNIRSandGerbilsXL,'FileType','spreadsheet','Format','auto');
     which_rows_this_subject = find(all_click_info.S == string(subID)); % find the rows in the spreadsheet which belong to this subject
     conditions = all_click_info.Condition(which_rows_this_subject);
