@@ -5,13 +5,13 @@
 % order = preprocessing, epoch, postprocessing, multsubjects
 %-------------------------------------------------------------------------------------------------------------------
 
-subID = '7050'; % Set current subject ID
+subID = '7065'; % Set current subject ID
 % Excel sheet parameters
-range_A = 'A50'; % Excel sheet 
-range_B = 'B50';
+range_A = 'A65'; % Excel sheet 
+range_B = 'B65';
 badchannels = 'channelsremoved.xlsx';
 % Set directories
-whos_using = 'Maa'; % Choose user for directory stuff
+whos_using = 'Bon'; % Choose user for directory stuff
 if whos_using == 'Ben'
     addpath('/home/ben/Documents/MATLAB/eeglab2023.1');
     pre_pro_epoched_data_folder = '/home/ben/Documents/GitHub/fNIRSandGerbils/prepro_epoched_data/';
@@ -24,9 +24,9 @@ elseif whos_using == 'Ema'
     BDF_filename = ['C:\Users\ema36\OneDrive\Documents\LiMN Things\Gerbil BDFs\', subID, '.bdf'];
 elseif whos_using == 'Bon'
     addpath('C:\Users\benri\Documents\eeglab2023.1');
-    pre_pro_epoched_data_folder = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\prepro_epoched_data\';
+    pre_pro_epoched_data_folder = 'D:\GitHub\fNIRSandGerbils\prepro_epoched_data\';
     addpath(pre_pro_epoched_data_folder)
-    BDF_filename = ['C:\Users\benri\Downloads\', subID, '.bdf'];
+    BDF_filename = ['D:\Downloads\', subID, '.bdf'];
 elseif whos_using == 'Maa'
     addpath('C:\Users\maana\Documents\MATLAB\eeglab2023.0');
     pre_pro_epoched_data_folder = 'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\prepro_epoched_data\';
@@ -38,12 +38,12 @@ end
 
 % Load in BDF files and Re-referencing to Externals (mastoids/earlobes)
 [ALLEEG EEG CURRENTSET ALLCOM] = eeglab; % load EEGLAB
-EEG = pop_biosig(BDF_filename, 'ref', [33 34], 'blockepoch', 'off', 'refoptions', {'keepref', 'off'}); % load in data, set reference as channels 33, 34 (mastoids)
+EEG = pop_biosig(BDF_filename, 'ref', 1:32, 'blockepoch', 'off', 'refoptions', {'keepref', 'on'}); % load in data, set reference as channels 33, 34 (mastoids)
 [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 0, 'gui', 'off');
 EEG = eeg_checkset( EEG );
 
 %removing extra channels
-EEG = pop_select(EEG, 'nochannel', {'EXG3','EXG4','EXG5','EXG6','EXG7','EXG8','GSR1','GSR2','Erg1','Erg2','Resp','Plet','Temp'});
+EEG = pop_select(EEG, 'nochannel', {'EXG1','EXG2','EXG3','EXG4','EXG5','EXG6','EXG7','EXG8','GSR1','GSR2','Erg1','Erg2','Resp','Plet','Temp'});
 [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 1, 'gui', 'off');
 EEG = eeg_checkset( EEG );
 % 'A1','A2','A3','A4','A5','A6','A7','A8','A9','A10','A11','A12','A13','A14','A15','A16','A17','A18','A19','A20','A21','A22','A23','A24','A25','A26','A27','A28','A29','A30','A31','A32',
@@ -54,7 +54,7 @@ if whos_using == 'Ben'
 elseif whos_using == 'Ema'
     EEG=pop_chanedit(EEG, 'load',{'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\chan_locs_cart.txt', 'filetype', 'sfp'});
 elseif whos_using == 'Bon'
-    EEG=pop_chanedit(EEG, 'load',{'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\chan_locs_cart.txt', 'filetype', 'sfp'});
+    EEG=pop_chanedit(EEG, 'load',{'D:\GitHub\fNIRSandGerbils\chan_locs_cart.txt', 'filetype', 'sfp'});
 elseif whos_using == 'Maa'
     EEG=pop_chanedit(EEG, 'load',{'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\chan_locs_cart.txt', 'filetype', 'sfp'});
 end
@@ -63,9 +63,9 @@ end
 EEG = eeg_checkset( EEG );
 
 %downsampling to 256 Hz
-%EEG = pop_resample( EEG, 256);
-%[ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 2, 'gui', 'off');
-%EEG = eeg_checkset( EEG );
+EEG = pop_resample( EEG, 256);
+[ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 2, 'gui', 'off');
+EEG = eeg_checkset( EEG );
 
 %bandpass filter (order of 1)
 fs = EEG.srate;

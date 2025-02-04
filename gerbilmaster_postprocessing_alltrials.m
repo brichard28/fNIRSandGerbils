@@ -20,8 +20,8 @@ else
     dir_fnirsandgerbils = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
 end
 
-curr_subject_ID = char('7054');%;char('7023','7024','7033','7035','7036','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050');%char('7002','7004','7007','7008','7010','7023','7024','7033','7035','7036','7038','7039','7040');
-% ,
+%curr_subject_ID = char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7057','7058','7059','7060','7062');
+curr_subject_ID = char('7064','7065') 
 % Set analysis parameters
 erp_window_start_time = -100; % 100 ms before onset of word
 erp_window_end_time = 750; % 750 ms after onset of word
@@ -29,7 +29,7 @@ nsubjects = size(curr_subject_ID,1);
 word_length = 0.3;
 num_tot_trials = 144; % look into this
 frontocentral_channels = [1,2,4,5,6,8,9,23,25,26,27,29,31,32];
-fs = 2048;
+fs = 256;
 target_info={};
 subplot_counter = 0;
 %% For each subject.....
@@ -85,7 +85,7 @@ for isubject = 1:size(curr_subject_ID,1)
     noise_thresh = 100; % 80;
 
     for itrial = 1:size(this_EEG.data,3)% for each trial (should be 144)
-        if mod(itrial,40) == 0 
+        if mod(itrial,11) == 0 
             disp(itrial)
         end
         icondition = conditions(itrial);
@@ -123,7 +123,7 @@ for isubject = 1:size(curr_subject_ID,1)
             [~,end_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_end_time)));%
 
 
-             if end_time - start_time == 1741
+             if end_time - start_time == 218
                 end_time = end_time - 1;
             end
 
@@ -163,7 +163,7 @@ for isubject = 1:size(curr_subject_ID,1)
 
             %start_time = floor((this_trial_target_onsets(ionset)  + (erp_window_start_time/1000))*fs) + fs;
             %end_time = floor((this_trial_target_onsets(ionset) + (erp_window_end_time/1000))*fs) + fs;
-            if end_time - start_time == 1741
+            if end_time - start_time == 218
                 end_time = end_time -1;
             end
 
@@ -210,7 +210,7 @@ for isubject = 1:size(curr_subject_ID,1)
 
         %% ISOLATE MASKER WORD ONSETS
         % Background Onsets (masker onsets)
-        for ionset = 1:length(masker_time)
+        for ionset = 2:length(masker_time)
 
             resampled_search_time = (masker_time(ionset))*1000;
             [~,start_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_start_time))); %
@@ -219,7 +219,7 @@ for isubject = 1:size(curr_subject_ID,1)
             %resampled_search_index = (masker_time(ionset) + (1*fs) - (0.1*fs));
             %start_time = round(resampled_search_index);
             %end_time = round(start_time + floor(((erp_window_end_time - erp_window_start_time)/1000)*fs));
-            if end_time - start_time == 1741
+            if end_time - start_time == 218
                 end_time = end_time -1;
             end
 

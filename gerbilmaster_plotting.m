@@ -3,8 +3,10 @@
 % Author: Benjamin Richards
 % 09/16/2024
 
-curr_subject_ID =  char('7023','7024','7033','7035','7036','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7051','7052');%char('7002','7004','7007','7008','7010','7023','7024','7033','7035','7036','7038','7039','7040');
-%curr_subject_ID = char('7053','7054');
+%curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7062','7064');
+curr_subject_ID = char('7057','7058','7059','7060','7065');
+
+% AMPLITUDE MODULATED SUBJECTS: '7057','7058','7059','7060'
 all_scrambled_by_color_onset = [];
 all_scrambled_by_object_onset = [];
 all_scrambled_by_masker_onset = [];
@@ -70,7 +72,7 @@ for isubject = 1:size(curr_subject_ID,1)
 %     plot(single_onset_time,squeeze(mean(data_by_masker_onset_baselined(frontocentral_channels,:,:),1)))
 %     title(subID)
 
-        color_words = {'red','green','blue','white'};
+    color_words = {'red','green','blue','white'};
     all_scrambled_by_color_onset(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1,2]))),3));
     all_scrambled_by_object_onset(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1,2]))),3));
     all_scrambled_by_masker_onset(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Condition,[1,2]))),3));
@@ -216,7 +218,7 @@ ylim([-3.5,3.5])
 title('Unscrambled','FontSize',20)
 legend({'Color','Object'},'FontSize',20)
 
-sgtitle('Frontocentral ERP','FontSize',20)
+sgtitle('Frontocentral ERP to Target Stream','FontSize',20)
 
 % Parietooccipital
 figure;
@@ -240,7 +242,7 @@ ylim([-3.5,3.5])
 title('Unscrambled','FontSize',20)
 legend({'Color','Object'},'FontSize',20)
 
-sgtitle('Parietooccipital ERP','FontSize',20)
+sgtitle('Parietooccipital ERP to Target Stream','FontSize',20)
 
 %% Color vs. object individual subbies
 figure;
@@ -251,7 +253,7 @@ this_unscrambled_data = squeeze(mean(all_scrambled_by_object_onset(:,frontocentr
 plot(single_onset_time,this_scrambled_data,'-g')
 plot(single_onset_time,this_unscrambled_data,'-m')
 ylim([-3.5,3.5])
-title('Scrambled')
+title('When Masker is Scrambled')
 legend({'Color','Object'})
 
 subplot(1,2,2)
@@ -261,7 +263,7 @@ this_unscrambled_data = squeeze(mean(all_unscrambled_by_object_onset(:,frontocen
 plot(single_onset_time,this_scrambled_data,'-g')
 plot(single_onset_time,this_unscrambled_data,'-m')
 ylim([-3.5,3.5])
-title('Uncrambled')
+title('When masker is Uncrambled')
 legend({'Color','Object'})
 
 %% Topoplots in each condition
@@ -269,7 +271,7 @@ figure;
 hold on
 cmin = -3.5;
 cmax = 2;
-fs = 2048;
+fs = 256;
 
 %EEG_struct_for_topographies = EEG_struct_for_topographies.EEG;
 
@@ -370,18 +372,26 @@ cmin = -3.5;
 cmax = 2;
 topoplot_indices = round(0:0.05*fs:(((erp_window_end_time - (erp_window_start_time + button_press_delay))/1000)*fs));
 topoplot_indices(1) = 1;
-topoplot_times = -600:50:750;
+topoplot_times = -100:50:750;
 figure;
 iplot=1;
+itime = 1;
 for itopo = topoplot_indices
-    subplot(1,length(topoplot_indices) + 1,iplot)
+    subplot(3,length(topoplot_indices) + 1,iplot)
     this_data = mean(all_button_press_onset(:,:,itopo), [1,3]);
     topoplot(this_data,EEG_struct_for_topographies.chanlocs,'maplimits',[cmin, cmax]);
+    title([num2str(topoplot_times(itime)),' ms'])
     iplot = iplot + 1;
+    itime = itime + 1;
     if itopo == topoplot_indices(end)
         colorbar
     end
 end
+
+subplot(3,length(topoplot_indices) + 1,[1:iplot])
+plot(single_onset_time,squeeze(mean(all_button_press_onset(:,32,:), [1,2])))
+title('Button Press at Cz')
+
 
 %% Button presses nearby vs. button presses far away
 figure;
