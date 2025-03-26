@@ -1,7 +1,7 @@
 %% gerbilmaster_postprocessing_alltrials.m
 
 % Set directories
-whos_using = 'Bon';
+whos_using = 'Maa';
 if all(whos_using == 'Ben')
     addpath('/home/ben/Documents/MATLAB/eeglab2023.1');
     dir = '/home/ben/Documents/GitHub/fNIRSandGerbils/';
@@ -21,7 +21,7 @@ else
 end
 
 %curr_subject_ID = char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7057','7058','7059','7060','7062');
-curr_subject_ID = char('7064','7065') 
+curr_subject_ID = char('7056','7057','7058','7059','7060');
 % Set analysis parameters
 erp_window_start_time = -100; % 100 ms before onset of word
 erp_window_end_time = 750; % 750 ms after onset of word
@@ -85,7 +85,7 @@ for isubject = 1:size(curr_subject_ID,1)
     noise_thresh = 100; % 80;
 
     for itrial = 1:size(this_EEG.data,3)% for each trial (should be 144)
-        if mod(itrial,11) == 0 
+        if mod(itrial,12) == 0 
             disp(itrial)
         end
         icondition = conditions(itrial);

@@ -4,7 +4,7 @@
 % 09/16/2024
 
 %curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7062','7064');
-curr_subject_ID = char('7057','7058','7059','7060','7065');
+curr_subject_ID = char('7056','7057','7058','7059','7060','7064','7065','7066','7067','7068','7069','7070','7071','7072','7073');
 
 % AMPLITUDE MODULATED SUBJECTS: '7057','7058','7059','7060'
 all_scrambled_by_color_onset = [];
@@ -17,7 +17,7 @@ num_erps_removed = zeros(size(curr_subject_ID,1));
 
 noise_thresh = 100;
 
-EEG_struct_for_topographies = load('D:\prepro_epoched_data\7023all_epoch.mat');
+EEG_struct_for_topographies = load('C:\Users\maana\Documents\GitHub\fNIRSandGerbils\prepro_epoched_data\7064all_epoch.mat');
 EEG_struct_for_topographies = EEG_struct_for_topographies.EEG;
 
 
