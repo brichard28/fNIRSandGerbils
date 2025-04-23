@@ -20,8 +20,9 @@ else
     dir_fnirsandgerbils = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
 end
 
+
 %curr_subject_ID = char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7057','7058','7059','7060','7062');
-curr_subject_ID = char('7056','7057','7058','7059','7060');
+curr_subject_ID = char('7078','7079');
 % Set analysis parameters
 erp_window_start_time = -100; % 100 ms before onset of word
 erp_window_end_time = 750; % 750 ms after onset of word

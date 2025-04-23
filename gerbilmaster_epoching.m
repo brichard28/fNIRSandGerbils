@@ -1,7 +1,7 @@
 % Primary Authors: Victoria Figarola, Benjamin Richardson 7/21/23
 % Secondary Authors: Emaya Anand, Maanasa Guru Adimurthy
 % EPOCHING
-subID = ['7073']; % set current subject ID
+subID = ['7079']; % set current subject ID
 
 % Set directories
 whos_using = 'Maa';
@@ -52,9 +52,18 @@ EEG = eeg_checkset( EEG );
 if (7023 <= double(string(subID))) && (double(string(subID)) <= 7071)
     EEG.event(~ismember(string({EEG.event(:).type}),{'35071'})) = [];
     EEG.urevent(~ismember([EEG.urevent(:).type],[35071])) = [];
-elseif double(string(subID)) >= 7072
+elseif double(string(subID)) >= 7072 && double(string(subID)) <= 7075
     EEG.event(~ismember(string({EEG.event(:).type}),{'52479'})) = [];
     EEG.urevent(~ismember([EEG.urevent(:).type],[52479])) = [];
+elseif double(string(subID)) >= 7076 && double(string(subID)) <= 7077
+    EEG.event(~ismember(string({EEG.event(:).type}),{'52991'})) = [];
+    EEG.urevent(~ismember([EEG.urevent(:).type],[52991])) = [];
+elseif double(string(subID)) == 7078
+    EEG.event(~ismember(string({EEG.event(:).type}),{'57087'})) = [];
+    EEG.urevent(~ismember([EEG.urevent(:).type],[57087])) = [];
+elseif double(string(subID)) == 7079
+    EEG.event(~ismember(string({EEG.event(:).type}),{'52991','61183','57087','65279'})) = [];
+    EEG.urevent(~ismember([EEG.urevent(:).type],[57087])) = [];
 
 elseif double(string(subID)) == 7022
     EEG.event(~ismember(string({EEG.event(:).type}), {'31999' , '30975', '65279', '31487'})) = [];

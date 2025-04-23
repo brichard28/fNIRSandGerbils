@@ -5,10 +5,10 @@
 % order = preprocessing, epoch, postprocessing, multsubjects
 %-------------------------------------------------------------------------------------------------------------------
 
-subID = '7072'; % Set current subject ID
+subID = '7079'; % Set current subject ID
 % Excel sheet parameters
-range_A = 'A68'; % Excel sheet 
-range_B = 'B68';
+range_A = 'A62'; % Excel sheet 
+range_B = 'B62';
 badchannels = 'channelsremoved.xlsx';
 % Set directories
 whos_using = 'Maa'; % Choose user for directory stuff
@@ -38,7 +38,7 @@ end
 
 % Load in BDF files and Re-referencing to Externals (mastoids/earlobes)
 [ALLEEG EEG CURRENTSET ALLCOM] = eeglab; % load EEGLAB
-EEG = pop_biosig(BDF_filename, 'ref', 1:32, 'blockepoch', 'off', 'refoptions', {'keepref', 'on'}); % load in data, set reference as channels 33, 34 (mastoids)
+EEG = pop_biosig(BDF_filename, 'ref', [33 34], 'blockepoch', 'off', 'refoptions', {'keepref', 'on'}); % load in data, set reference as channels 33, 34 (mastoids)
 [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 0, 'gui', 'off');
 EEG = eeg_checkset( EEG );
 

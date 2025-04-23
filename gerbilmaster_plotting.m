@@ -4,7 +4,7 @@
 % 09/16/2024
 
 %curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7062','7064');
-curr_subject_ID = char('7056','7057','7058','7059','7060','7064','7065','7066','7067','7068','7069','7070','7071','7072','7073');
+curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079');
 
 % AMPLITUDE MODULATED SUBJECTS: '7057','7058','7059','7060'
 all_scrambled_by_color_onset = [];
@@ -62,8 +62,8 @@ for isubject = 1:size(curr_subject_ID,1)
     button_press_delay = 0;
     single_onset_time = linspace(erp_window_start_time,erp_window_end_time,size(data_by_target_onset_baselined,2));
     single_onset_time_buttonpress = linspace(erp_window_start_time + button_press_delay,erp_window_end_time,size(data_by_button_press_baselined,2));
-    frontocentral_channels = [1,2,4,5,6,8,9,23,25,26,27,29,31,32];
-    parietooccipital_channels = 11:20;
+    frontocentral_channels =[1,2,4,5,6,8,9,23,25,26,27,29,31,32];%
+    parietooccipital_channels =[11:20] ;%
     
     % Plot all individual word ERPs for this subject
 %     figure;
