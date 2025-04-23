@@ -509,6 +509,11 @@ for isubject = 1:size(curr_subject_ID,1)
     all_FArates_new(isubject,3) = sum(num_FAs_this_subject(conditions_this_subject == 3))/sum(num_target_object_words(conditions_this_subject == 3));
     all_FArates_new(isubject,4) = sum(num_FAs_this_subject(conditions_this_subject == 4))/sum(num_target_object_words(conditions_this_subject == 4));
 
+    all_hitrates_new(all_hitrates_new == 0) = 0.0001;
+    all_FArates_new(all_FArates_new == 0) = 0.0001;
+
+    all_hitrates_new(all_hitrates_new == 1) = 0.99;
+    all_FArates_new(all_FArates_new == 1) = 0.99;
     all_dprimes_new(isubject,1) = norminv(all_hitrates_new(isubject,1)) - norminv(all_FArates_new(isubject,1));
     all_dprimes_new(isubject,2) = norminv(all_hitrates_new(isubject,2)) - norminv(all_FArates_new(isubject,2));
     all_dprimes_new(isubject,3) = norminv(all_hitrates_new(isubject,3)) - norminv(all_FArates_new(isubject,3));
