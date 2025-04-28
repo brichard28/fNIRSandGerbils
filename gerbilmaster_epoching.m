@@ -1,7 +1,7 @@
 % Primary Authors: Victoria Figarola, Benjamin Richardson 7/21/23
 % Secondary Authors: Emaya Anand, Maanasa Guru Adimurthy
 % EPOCHING
-subID = ['7079']; % set current subject ID
+subID = ['7080']; % set current subject ID
 
 % Set directories
 whos_using = 'Maa';
@@ -63,7 +63,11 @@ elseif double(string(subID)) == 7078
     EEG.urevent(~ismember([EEG.urevent(:).type],[57087])) = [];
 elseif double(string(subID)) == 7079
     EEG.event(~ismember(string({EEG.event(:).type}),{'52991','61183','57087','65279'})) = [];
-    EEG.urevent(~ismember([EEG.urevent(:).type],[57087])) = [];
+    EEG.urevent(~ismember([EEG.urevent(:).type],[52991,61183,57087,65279])) = [];
+elseif double(string(subID)) == 7080
+    EEG.event(~ismember(string({EEG.event(:).type}),{'52991','36607','35583'})) = [];
+    EEG.urevent(~ismember([EEG.urevent(:).type],[52991,36607,35583])) = [];
+
 
 elseif double(string(subID)) == 7022
     EEG.event(~ismember(string({EEG.event(:).type}), {'31999' , '30975', '65279', '31487'})) = [];
