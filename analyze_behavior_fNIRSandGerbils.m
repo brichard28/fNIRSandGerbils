@@ -5,7 +5,7 @@
 
 % Create array of subject IDs that you would like to analyze now
 %curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064'); % NOT Amplitude modulated
-curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077');%,'7078','7079'); % amplitude modulated masker
+curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080');%); % amplitude modulated masker
 user = 'Bon';
 %% Load in Relevant files
 % Spreadsheet which contains all subjects' condition, soundfile
@@ -13,8 +13,8 @@ if user == 'Ema'
     fNIRSandGerbilsXL = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
     stim_file = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\stim\s_';
 elseif user == 'Bon'
-    fNIRSandGerbilsXL = 'D:\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
-    stim_file = 'D:\GitHub\fNIRSandGerbils\stim\s_';
+    fNIRSandGerbilsXL = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
+    stim_file = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\stim\s_';
 elseif user == 'Ben'
     fNIRSandGerbilsXL = '/home/ben/Documents/GitHub/fNIRSandGerbils/data/fNIRSandGerbils.xlsx';
     stim_file = '/home/ben/Documents/GitHub/fNIRSandGerbils/stim/s_';
@@ -56,9 +56,9 @@ for isubject = 1:size(curr_subject_ID,1) % For each subject....
     %% Loop through each trial, and calculate hits and false alarms
 
     n_trials = length(trials); % find number of trials
-    threshold_window_start = 0.1; % time in seconds from onset of word for start of hit/FA windows
-    threshold_window_end = 0.8; % time in seconds from onset of word for end of hit/FA windows
-    double_click_threshold = 0.2; % distance between clicks at which it would be decided that it is a double click
+    threshold_window_start = 0.5; % time in seconds from onset of word for start of hit/FA windows
+    threshold_window_end = 1.5; % time in seconds from onset of word for end of hit/FA windows
+    double_click_threshold = 0.75; % distance between clicks at which it would be decided that it is a double click
 
     by_subject_behavior_info(isubject).nearest_click_distances = struct(); % create structure for nearest click distances
 
@@ -359,139 +359,15 @@ end
 % title('Click Times since Color Word Onset vs. Color Word','FontSize',18);
 
 
-%% Hit and False Alarm Rates
-hit_rates_condition1 = nan(size(curr_subject_ID,1),24); % scrambled diff talker
-hit_rates_condition2 = nan(size(curr_subject_ID,1),24); % scrambled same talker
-hit_rates_condition3 = nan(size(curr_subject_ID,1),24); % unscrambled diff talker
-hit_rates_condition4 = nan(size(curr_subject_ID,1),24); % unscrambled same talker
-
-
-FA_rates_condition1 = nan(size(curr_subject_ID,1),24); % scrambled diff talker
-FA_rates_condition2 = nan(size(curr_subject_ID,1),24); % scrambled same talker
-FA_rates_condition3 = nan(size(curr_subject_ID,1),24); % unscrambled diff talker
-FA_rates_condition4 = nan(size(curr_subject_ID,1),24); % unscrambled same talker
-
-
-
-difference_scores_condition1 = nan(size(curr_subject_ID,1),24);
-difference_scores_condition2 = nan(size(curr_subject_ID,1),24);
-difference_scores_condition3 = nan(size(curr_subject_ID,1),24);
-difference_scores_condition4 = nan(size(curr_subject_ID,1),24);
-
 %1	scrambled_diff_talker
 %2	scrambled_same_talker
 %3	unscrambled_diff_talker
 %4	unscrambled_same_talker
 
 
-for isubject = 1:size(curr_subject_ID,1)
-    ionset1 = 0;
-    ionset2 = 0;
-    ionset3 = 0;
-    ionset4 = 0;
-
-    n_trials = length(by_subject_behavior_info(isubject).condition);
-
-    for itrial = 1:n_trials
-        this_condition = by_subject_behavior_info(isubject).condition(itrial).value;
-        if this_condition == 1 % scrambled diff talker
-            ionset1 = ionset1 + 1;
-            hit_rates_condition1(isubject,ionset1) =   by_subject_behavior_info(isubject).num_hits(itrial).value/by_subject_behavior_info(isubject).num_target_color_words(itrial).value; % num subjects x num presentations
-            FA_rates_condition1(isubject,ionset1) =  by_subject_behavior_info(isubject).num_FAs(itrial).value/(by_subject_behavior_info(isubject).num_target_object_words(itrial).value); % num subjects x num presentations
-            difference_scores_condition1(isubject,ionset1) = by_subject_behavior_info(isubject).difference_score(itrial).value;
-            %            chance_rate_condition1(isubject,ionset1) = by_subject_behavior_info(isubject).num_target_color_words(itrial).value/(by_subject_behavior_info(isubject).num_target_color_words(itrial).value + by_subject_behavior_info(isubject).num_masker_words(itrial).value);
-        elseif this_condition == 2 % scrambled same talker
-            ionset2 = ionset2 + 1;
-
-            hit_rates_condition2(isubject,ionset2) = by_subject_behavior_info(isubject).num_hits(itrial).value/by_subject_behavior_info(isubject).num_target_color_words(itrial).value; % num subjects x num presentations
-            FA_rates_condition2(isubject,ionset2) =  by_subject_behavior_info(isubject).num_FAs(itrial).value/(by_subject_behavior_info(isubject).num_target_object_words(itrial).value); % num subjects x num presentations
-            difference_scores_condition2(isubject,ionset2) = by_subject_behavior_info(isubject).difference_score(itrial).value;
-            %         chance_rate_condition2(isubject,ionset2) = by_subject_behavior_info(isubject).num_target_color_words(itrial).value/(by_subject_behavior_info(isubject).num_target_color_words(itrial).value + by_subject_behavior_info(isubject).num_masker_words(itrial).value);
-        elseif this_condition == 3 % unscrambled diff talker
-            ionset3 = ionset3 + 1;
-
-            hit_rates_condition3(isubject,ionset2) = by_subject_behavior_info(isubject).num_hits(itrial).value/by_subject_behavior_info(isubject).num_target_color_words(itrial).value; % num subjects x num presentations
-            FA_rates_condition3(isubject,ionset2) =  by_subject_behavior_info(isubject).num_FAs(itrial).value/(by_subject_behavior_info(isubject).num_target_object_words(itrial).value); % num subjects x num presentations
-            difference_scores_condition3(isubject,ionset2) = by_subject_behavior_info(isubject).difference_score(itrial).value;
-            %       chance_rate_condition3(isubject,ionset2) = by_subject_behavior_info(isubject).num_target_color_words(itrial).value/(by_subject_behavior_info(isubject).num_target_color_words(itrial).value + by_subject_behavior_info(isubject).num_masker_words(itrial).value);
-        elseif this_condition == 4 % unscrambled same talker
-            ionset4 = ionset4 + 1;
-
-            hit_rates_condition4(isubject,ionset2) = by_subject_behavior_info(isubject).num_hits(itrial).value/by_subject_behavior_info(isubject).num_target_color_words(itrial).value; % num subjects x num presentations
-            FA_rates_condition4(isubject,ionset2) =  by_subject_behavior_info(isubject).num_FAs(itrial).value/(by_subject_behavior_info(isubject).num_target_object_words(itrial).value); % num subjects x num presentations
-            difference_scores_condition4(isubject,ionset2) = by_subject_behavior_info(isubject).difference_score(itrial).value;
-            %       chance_rate_condition4(isubject,ionset2) = by_subject_behavior_info(isubject).num_target_color_words(itrial).value/(by_subject_behavior_info(isubject).num_target_color_words(itrial).value + by_subject_behavior_info(isubject).num_masker_words(itrial).value);
-
-        end
-
-    end
-end
-all_hitrates = cat(3,hit_rates_condition1,hit_rates_condition2,hit_rates_condition3,hit_rates_condition4); % num subjects x num presentations x num conditions
-all_FArates = cat(3,FA_rates_condition1,FA_rates_condition2,hit_rates_condition3,hit_rates_condition4); % num subjects x num presentations x num conditions
-%all_chance_rates = cat(3,chance_rate_condition1,chance_rate_condition2);
-
-all_hitrates(all_hitrates == 0) = nan;
-all_FArates(all_FArates == 0) = nan;
-
-all_difference_scores = cat(3,difference_scores_condition1,difference_scores_condition2);
-%chance_rate = (1/25)*ones(length(curr_subject_ID),6,7);
-%all_hitrates = all_hitrates + 0.001;
-%d_primes = norminv(all_hitrates) - norminv(all_FArates); % num subjects x num presentations x num conditions
-d_primes = norminv(all_hitrates) - norminv(all_FArates);
-% find subjects with d_primes of Inf or -Inf (to exclude)
-
-d_primes(d_primes == Inf) = nan;
-d_primes(d_primes == -Inf) = nan;
-d_primes(d_primes < 0) = nan;
-
-
-% figure;
-% plot(squeeze(nanmean(all_hitrates,2))','-o');
-% title('hit rates')
-% ylim([0 1])
-% xticks(1:2)
-% xticklabels({'scrambled','unscrambled'})
-%
-% figure;
-% plot(squeeze(nanmean(all_FArates,2))','-o');
-% title('FA rates')
-% ylim([0 1])
-% xticks(1:2)
-% xticklabels({'scrambled','unscrambled'})
-%
-% figure;
-% plot(squeeze(nanmean(d_primes,2))','-o');
-% title('D prime (chance rate version)')
-% %ylim([0,1])
-% xticks(1:2)
-% xticklabels({'scrambled','unscrambled'})
-%
-% figure;boxplot(squeeze(nanmean(d_primes,2)))
-% ylabel('d prime')
-% xlabel('Condition')
-% %ylim([0 1])
-% xticks(1:2)
-% xticklabels({'scrambled','unscrambled'})
-
-% figure;
-% boxplot(squeeze(nanmean(all_difference_scores,2)))
-% ylabel('difference score')
-% xlabel('Condition')
-% ylim([-2 2])
-% xticks(1:2)
-% xticklabels({'scrambled','unscrambled'})
-%
-% figure;
-% histogram(difference_scores_condition1(:),'BinWidth',1)
-% hold on
-% histogram(difference_scores_condition2(:),'BinWidth',1)
-% legend({'Scrambled','Unscrambled'})
-% xlabel('Difference Score','FontSize',18)
-% ylabel('Frequency of occurrence','FontSize',18)
-
 %% Hit rate over entire experiment instead
-all_hitrates_new = [];
-all_FArates_new = [];
+all_hitrates = [];
+all_FArates = [];
 for isubject = 1:size(curr_subject_ID,1)
     num_hits_this_subject = [by_subject_behavior_info(isubject).num_hits(:).value];
     num_FAs_this_subject = [by_subject_behavior_info(isubject).num_FAs(:).value];
@@ -499,67 +375,32 @@ for isubject = 1:size(curr_subject_ID,1)
     num_target_color_words = [by_subject_behavior_info(isubject).num_target_color_words(:).value];
     num_target_object_words = [by_subject_behavior_info(isubject).num_target_object_words(:).value];
 
-    all_hitrates_new(isubject,1) = sum(num_hits_this_subject(conditions_this_subject == 1))/sum(num_target_color_words(conditions_this_subject == 1));
-    all_hitrates_new(isubject,2) = sum(num_hits_this_subject(conditions_this_subject == 2))/sum(num_target_color_words(conditions_this_subject == 2));
-    all_hitrates_new(isubject,3) = sum(num_hits_this_subject(conditions_this_subject == 3))/sum(num_target_color_words(conditions_this_subject == 3));
-    all_hitrates_new(isubject,4) = sum(num_hits_this_subject(conditions_this_subject == 4))/sum(num_target_color_words(conditions_this_subject == 4));
+    all_hitrates(isubject,1) = sum(num_hits_this_subject(conditions_this_subject == 1))/sum(num_target_color_words(conditions_this_subject == 1));
+    all_hitrates(isubject,2) = sum(num_hits_this_subject(conditions_this_subject == 2))/sum(num_target_color_words(conditions_this_subject == 2));
+    all_hitrates(isubject,3) = sum(num_hits_this_subject(conditions_this_subject == 3))/sum(num_target_color_words(conditions_this_subject == 3));
+    all_hitrates(isubject,4) = sum(num_hits_this_subject(conditions_this_subject == 4))/sum(num_target_color_words(conditions_this_subject == 4));
 
-    all_FArates_new(isubject,1) = sum(num_FAs_this_subject(conditions_this_subject == 1))/sum(num_target_object_words(conditions_this_subject == 1));
-    all_FArates_new(isubject,2) = sum(num_FAs_this_subject(conditions_this_subject == 2))/sum(num_target_object_words(conditions_this_subject == 2));
-    all_FArates_new(isubject,3) = sum(num_FAs_this_subject(conditions_this_subject == 3))/sum(num_target_object_words(conditions_this_subject == 3));
-    all_FArates_new(isubject,4) = sum(num_FAs_this_subject(conditions_this_subject == 4))/sum(num_target_object_words(conditions_this_subject == 4));
+    all_FArates(isubject,1) = sum(num_FAs_this_subject(conditions_this_subject == 1))/sum(num_target_object_words(conditions_this_subject == 1));
+    all_FArates(isubject,2) = sum(num_FAs_this_subject(conditions_this_subject == 2))/sum(num_target_object_words(conditions_this_subject == 2));
+    all_FArates(isubject,3) = sum(num_FAs_this_subject(conditions_this_subject == 3))/sum(num_target_object_words(conditions_this_subject == 3));
+    all_FArates(isubject,4) = sum(num_FAs_this_subject(conditions_this_subject == 4))/sum(num_target_object_words(conditions_this_subject == 4));
 
-    all_hitrates_new(all_hitrates_new == 0) = 0.0001;
-    all_FArates_new(all_FArates_new == 0) = 0.0001;
+    all_hitrates(all_hitrates == 0) = 0.0001;
+    all_FArates(all_FArates == 0) = 0.0001;
 
-    all_hitrates_new(all_hitrates_new == 1) = 0.99;
-    all_FArates_new(all_FArates_new == 1) = 0.99;
-    all_dprimes_new(isubject,1) = norminv(all_hitrates_new(isubject,1)) - norminv(all_FArates_new(isubject,1));
-    all_dprimes_new(isubject,2) = norminv(all_hitrates_new(isubject,2)) - norminv(all_FArates_new(isubject,2));
-    all_dprimes_new(isubject,3) = norminv(all_hitrates_new(isubject,3)) - norminv(all_FArates_new(isubject,3));
-    all_dprimes_new(isubject,4) = norminv(all_hitrates_new(isubject,4)) - norminv(all_FArates_new(isubject,4));
+    all_hitrates(all_hitrates == 1) = 0.99;
+    all_FArates(all_FArates == 1) = 0.99;
+    all_dprimes(isubject,1) = norminv(all_hitrates(isubject,1)) - norminv(all_FArates(isubject,1));
+    all_dprimes(isubject,2) = norminv(all_hitrates(isubject,2)) - norminv(all_FArates(isubject,2));
+    all_dprimes(isubject,3) = norminv(all_hitrates(isubject,3)) - norminv(all_FArates(isubject,3));
+    all_dprimes(isubject,4) = norminv(all_hitrates(isubject,4)) - norminv(all_FArates(isubject,4));
 
-    all_dprimes_collapsed_across_talker(isubject,1) = norminv(mean(all_hitrates_new(isubject,1:2),2)) - norminv(mean(all_FArates_new(isubject,1:2),2));
-    all_dprimes_collapsed_across_talker(isubject,2) = norminv(mean(all_hitrates_new(isubject,3:4),2)) - norminv(mean(all_FArates_new(isubject,3:4),2));
+    all_dprimes_collapsed_across_talker(isubject,1) = norminv(mean(all_hitrates(isubject,1:2),2)) - norminv(mean(all_FArates(isubject,1:2),2));
+    all_dprimes_collapsed_across_talker(isubject,2) = norminv(mean(all_hitrates(isubject,3:4),2)) - norminv(mean(all_FArates(isubject,3:4),2));
 
 end
 
-figure;
-plot(all_hitrates_new','-o');
-title('hit rates')
-ylim([0 1])
-ylabel('Hit Rate','FontSize',18)
-xticks(1:4)
-xticklabels({'scrambled diff talker','scrambled same talker','unscrambled diff talker','unscrambled same talker'})
-xlabel('Condition','FontSize',18)
 
-figure;
-plot(all_FArates_new','-o');
-title('FA rates')
-ylim([0 1])
-ylabel('False Alarm Rate','FontSize',18)
-xticks(1:4)
-xticklabels({'scrambled diff talker','scrambled same talker','unscrambled diff talker','unscrambled same talker'})
-xlabel('Condition','FontSize',18)
-
-figure;
-hold on
-plot(all_dprimes_new','-ok', 'LineWidth',1);
-scatter(1:4,mean(all_dprimes_new,1),'or','LineWidth',1)
-errorbar(1:4,mean(all_dprimes_new,1),std(all_dprimes_new,[],1)./(sqrt(size(all_dprimes_new,1) - 1)),'r', 'LineWidth',2);
-title('D-Primes vs Condition','FontSize',20)
-%ylim([0,1])
-ylabel('d-prime','FontSize',18) 
-xticks(1:4)
-xticklabels({'scrambled diff talker','scrambled same talker','unscrambled diff talker','unscrambled same talker'})
-xlabel('Condition','FontSize',18)
-
-figure;
-hold on
-plot(all_dprimes_collapsed_across_talker','-ok','LineWidth',0.5);
-scatter(1:2,mean(all_dprimes_collapsed_across_talker,1),'or','LineWidth',4,'MarkerFaceColor','r')
-errorbar(1:2,mean(all_dprimes_collapsed_across_talker,1),std(all_dprimes_collapsed_across_talker,[],1)./(sqrt(size(all_dprimes_collapsed_across_talker,1) - 1)),'r', 'LineWidth',4,'CapSize',10);
-ylabel("d'",'FontSize',20) 
-xticks(1:2)
-xlim([0.75,2.25])
-xticklabels({'Scrambled','Unscrambled'})
+writematrix(all_hitrates,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_Hit_Rates_Exp_1.csv')
+writematrix(all_FArates,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_FA_Rates_Exp_1.csv')
+writematrix(all_dprimes,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_D_primes_Exp_1.csv')

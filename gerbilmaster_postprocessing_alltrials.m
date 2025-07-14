@@ -1,16 +1,16 @@
 %% gerbilmaster_postprocessing_alltrials.m
 
 % Set directories
-whos_using = 'Maa';
+whos_using = 'Bon';
 if all(whos_using == 'Ben')
     addpath('/home/ben/Documents/MATLAB/eeglab2023.1');
     dir = '/home/ben/Documents/GitHub/fNIRSandGerbils/';
     dir_fnirsandgerbils = '/home/ben/Documents/GitHub/fNIRSandGerbils/data/fNIRSandGerbils.xlsx';
 elseif all(whos_using == 'Bon')
     addpath('C:\Users\benri\Documents\eeglab2023.1');
-    dir = 'D:\GitHub\fNIRSandGerbils\';
-    dir_fnirsandgerbils = 'D:\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
-    prepro_folder = 'D:\prepro_epoched_data\';
+    dir = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\';
+    dir_fnirsandgerbils = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
+    prepro_folder = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\prepro_epoched_data\';
 elseif all(whos_using == 'Maa')
     dir = 'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\';
     dir_fnirsandgerbils = 'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
@@ -21,8 +21,11 @@ else
 end
 
 
-%curr_subject_ID = char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7047','7048','7049','7050','7057','7058','7059','7060','7062');
-curr_subject_ID = char('7080');
+%curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064'); % NOT Amplitude modulated
+curr_subject_ID = char('7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080');%); % amplitude modulated masker
+% '7056',
+
+
 % Set analysis parameters
 erp_window_start_time = -100; % 100 ms before onset of word
 erp_window_end_time = 750; % 750 ms after onset of word
