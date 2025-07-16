@@ -77,7 +77,7 @@ ggplot(hit_rates, aes(x = x_pos, y = HitRate, color = Masker, fill = Masker)) +
   theme_minimal() +
   ylim(c(0,1))
   theme(legend.position = "right")
-
+  
 
     ####################################################
     ##    FA Rates    ##
@@ -209,6 +209,32 @@ ggplot(d_primes, aes(x = x_pos, y = DPrime, color = Masker, fill = Masker)) +
   theme_minimal() +
   ylim(c(0,5.5)) +
   theme(legend.position = "right")
+
+
+##### D prime statistics ######
+
+
+
+model_dprime_exp1 <- mixed(DPrime ~ Masker*Talker + (1|S),data= d_primes,control = lmerControl(optimizer = "bobyqa"))
+
+model_dprime_exp1
+
+
+# Post hocs
+# Effect of talker when masker is scrambled
+d_primes$Talker <- relevel(d_primes$Talker, "Different")
+posthoc_talker_scrambled <- lmer(DPrime ~ Talker + (1|S),
+                             data= subset(d_primes, Masker == "Scrambled"), 
+                             control = lmerControl(optimizer = "bobyqa"))
+
+summary(posthoc_talker_scrambled_exp1)
+
+posthoc_talker_unscrambled <- lmer(DPrime ~ Talker + (1|S),
+                                 data= subset(d_primes, Masker == "Unscrambled"), 
+                                 control = lmerControl(optimizer = "bobyqa"))
+
+summary(posthoc_talker_unscrambled_exp1)
+
 
 
 ####################################################
@@ -412,3 +438,12 @@ ggplot(d_primes, aes(x = x_pos, y = DPrime, color = Masker, fill = Masker)) +
   theme_minimal() +
   ylim(c(0,5.5)) +
   theme(legend.position = "right")
+
+
+##### D prime statistics ######
+
+
+
+model_dprime_exp2 <- mixed(DPrime ~ Masker*Talker + (1|S),data= d_primes,control = lmerControl(optimizer = "bobyqa"))
+
+model_dprime_exp2

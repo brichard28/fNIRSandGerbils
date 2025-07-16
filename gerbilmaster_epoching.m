@@ -4,14 +4,14 @@
 subID = ['7080']; % set current subject ID
 
 % Set directories
-whos_using = 'Maa';
+whos_using = 'Bon';
 
 if whos_using == 'Ben'
     addpath('/home/ben/Documents/MATLAB/eeglab2023.1/')
     pre_pro_epoched_data_folder = '/home/ben/Documents/GitHub/fNIRSandGerbils/prepro_epoched_data/';
 elseif whos_using == 'Bon' % Ben Laptop
     addpath('\Users\benri\Documents\eeglab2023.0\')
-    pre_pro_epoched_data_folder = 'D:\prepro_epoched_data\';
+    pre_pro_epoched_data_folder = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\prepro_epoched_data\';
 elseif whos_using == 'Ema'
     addpath('C:\Users\ema36\OneDrive\Documents\MATLAB\eeglab2023.0');
     pre_pro_epoched_data_folder = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\prepro_epoched_data\';
@@ -52,7 +52,10 @@ EEG = eeg_checkset( EEG );
 if (7023 <= double(string(subID))) && (double(string(subID)) <= 7071)
     EEG.event(~ismember(string({EEG.event(:).type}),{'35071'})) = [];
     EEG.urevent(~ismember([EEG.urevent(:).type],[35071])) = [];
-elseif double(string(subID)) >= 7072 && double(string(subID)) <= 7075
+elseif double(string(subID)) == 7072
+    EEG.event(~ismember(string({EEG.event(:).type}),{'52479','51455'})) = [];
+    EEG.urevent(~ismember([EEG.urevent(:).type],[52479,51455])) = [];
+elseif double(string(subID)) > 7072 && double(string(subID)) <= 7075
     EEG.event(~ismember(string({EEG.event(:).type}),{'52479'})) = [];
     EEG.urevent(~ismember([EEG.urevent(:).type],[52479])) = [];
 elseif double(string(subID)) >= 7076 && double(string(subID)) <= 7077
@@ -127,12 +130,35 @@ EEG.event(events_to_remove) = [];
 EEG.urevent(urevents_to_remove) = [];
 
 
+% for subject 7067, add an arbitrary trigger where it was dropped
+if double(string(subID)) == 7067
+    index = 10;
+    n = numel(EEG.event);
+    new_type = '35071';
+    new_latency = mean([EEG.event(index - 1).latency,EEG.event(index + 1).latency]);
+    new_urevent = index + 2;
+    for i = index+1:numel(EEG.event)
+        EEG.event(i).urevent = EEG.event(i).urevent + 1;
+    end
+    s_out(1:index-1) = EEG.event(1:index-1);
+    s_out(index) = struct('type',new_type,'latency',new_latency,'urevent',new_urevent,'duration',0);
+    
+    s_out(index+1:n+1) = EEG.event(index:n);
 
+    EEG.event = s_out;
+
+    new_ur_element.type = 35071;
+    new_ur_element.latency = mean([EEG.event(index - 1).latency,EEG.event(index + 1).latency]);
+    s_ur_out(1:index-1) = EEG.urevent(1:index - 1);
+    s_ur_out(index) = new_ur_element;
+    s_ur_out(index+1:n+1) = EEG.urevent(index:n);
+
+end 
 % if subID >= 7023, all trigger types will be 35071. Rename them to the
 % proper trigger types (sst = 18687, ust = 35327, sdt = 44031, udt = 11007)
 % Rename triggers to 4 distinct types (one for each condition)
 if double(string(subID)) >= 7023
-    fNIRSandGerbilsXL = 'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
+    fNIRSandGerbilsXL = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
     all_click_info = readtable(fNIRSandGerbilsXL,'FileType','spreadsheet','Format','auto');
     which_rows_this_subject = find(all_click_info.S == string(subID)); % find the rows in the spreadsheet which belong to this subject
     conditions = all_click_info.Condition(which_rows_this_subject);

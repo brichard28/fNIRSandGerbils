@@ -7,11 +7,11 @@
 
 subID = '7080'; % Set current subject ID
 % Excel sheet parameters
-range_A = 'A63'; % Excel sheet 
-range_B = 'B63';
+range_A = 'A80'; % Excel sheet 
+range_B = 'B80';
 badchannels = 'channelsremoved.xlsx';
 % Set directories
-whos_using = 'Maa'; % Choose user for directory stuff
+whos_using = 'Bon'; % Choose user for directory stuff
 if whos_using == 'Ben'
     addpath('/home/ben/Documents/MATLAB/eeglab2023.1');
     pre_pro_epoched_data_folder = '/home/ben/Documents/GitHub/fNIRSandGerbils/prepro_epoched_data/';
@@ -24,9 +24,9 @@ elseif whos_using == 'Ema'
     BDF_filename = ['C:\Users\ema36\OneDrive\Documents\LiMN Things\Gerbil BDFs\', subID, '.bdf'];
 elseif whos_using == 'Bon'
     addpath('C:\Users\benri\Documents\eeglab2023.1');
-    pre_pro_epoched_data_folder = 'D:\GitHub\fNIRSandGerbils\prepro_epoched_data\';
+    pre_pro_epoched_data_folder = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\prepro_epoched_data\';
     addpath(pre_pro_epoched_data_folder)
-    BDF_filename = ['D:\Downloads\', subID, '.bdf'];
+    BDF_filename = ['C:\Users\benri\Downloads\', subID, '.bdf'];
 elseif whos_using == 'Maa'
     addpath('C:\Users\maana\Documents\MATLAB\eeglab2023.0');
     pre_pro_epoched_data_folder = 'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\prepro_epoched_data\';
@@ -54,7 +54,7 @@ if whos_using == 'Ben'
 elseif whos_using == 'Ema'
     EEG=pop_chanedit(EEG, 'load',{'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\chan_locs_cart.txt', 'filetype', 'sfp'});
 elseif whos_using == 'Bon'
-    EEG=pop_chanedit(EEG, 'load',{'D:\GitHub\fNIRSandGerbils\chan_locs_cart.txt', 'filetype', 'sfp'});
+    EEG=pop_chanedit(EEG, 'load',{'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\chan_locs_cart.txt', 'filetype', 'sfp'});
 elseif whos_using == 'Maa'
     EEG=pop_chanedit(EEG, 'load',{'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\chan_locs_cart.txt', 'filetype', 'sfp'});
 end

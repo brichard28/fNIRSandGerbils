@@ -37,34 +37,6 @@ for isubject = 1:size(curr_subject_ID,1)
     % Load Data
     load(append('Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'))
 
-    % Remove noisy ERPs
-    erps_to_remove = [];
-    z = [];
-    for iERP = 1:size(data_by_target_onset_baselined,3)
-        if max(abs(data_by_target_onset_baselined(:,:,iERP)),[],'all') > noise_thresh
-            z(iERP) = max(abs(data_by_target_onset_baselined(:,:,iERP)),[],'all');
-            num_erps_removed(isubject) = num_erps_removed(isubject) + 1;
-            erps_to_remove = [erps_to_remove, iERP];
-        end
-    end
-    data_by_target_onset_baselined(:,:,erps_to_remove) = [];
-    ERP_info_target.SubID(erps_to_remove,:) = [];
-    ERP_info_target.Trial(erps_to_remove) = [];
-    ERP_info_target.Word(erps_to_remove) = [];
-    ERP_info_target.Condition(erps_to_remove) = [];
-
-    erps_to_remove = [];
-    for iERP = 1:size(data_by_masker_onset_baselined,3)
-        if max(abs(data_by_masker_onset_baselined(:,:,iERP)),[],'all') > noise_thresh
-            num_erps_removed(isubject) = num_erps_removed(isubject) + 1;
-            erps_to_remove = [erps_to_remove, iERP];
-        end
-    end
-    data_by_masker_onset_baselined(:,:,erps_to_remove) = [];
-    ERP_info_masker.SubID(erps_to_remove,:) = [];
-    ERP_info_masker.Trial(erps_to_remove) = [];
-    ERP_info_masker.Condition(erps_to_remove) = [];
-
     % Plotting parameters
     erp_window_start_time =-100;
     erp_window_end_time = 750;
