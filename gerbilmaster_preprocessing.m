@@ -5,10 +5,10 @@
 % order = preprocessing, epoch, postprocessing, multsubjects
 %-------------------------------------------------------------------------------------------------------------------
 
-subID = '7080'; % Set current subject ID
+subID = '7082'; % Set current subject ID
 % Excel sheet parameters
-range_A = 'A80'; % Excel sheet 
-range_B = 'B80';
+range_A = 'A82'; % Excel sheet 
+range_B = 'B82';
 badchannels = 'channelsremoved.xlsx';
 % Set directories
 whos_using = 'Bon'; % Choose user for directory stuff

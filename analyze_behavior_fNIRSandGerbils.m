@@ -4,8 +4,8 @@
 % Create array of all subjects that have been run
 
 % Create array of subject IDs that you would like to analyze now
-%curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064'); % NOT Amplitude modulated
-curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080');%); % amplitude modulated masker
+%curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081'); % NOT Amplitude modulated
+curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080','7082');%); % amplitude modulated masker
 user = 'Bon';
 %% Load in Relevant files
 % Spreadsheet which contains all subjects' condition, soundfile
