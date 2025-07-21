@@ -23,8 +23,23 @@ names(p3_data)[names(p3_data) == "Amplitude"] <- "p3"
 # Merge all data frames on the common identifier columns
 all_data <- Reduce(function(x, y) merge(x, y, by = c("S", "Masker", "Talker", "WordType")), list(p1_data, n1_data, p2_data, p3_data))
 
-ggplot(all_data,
-       aes(Talker, n1 - p1)) +
+frontocentral_electrodes <- c("Fz","Cz")
+parietooccipital_electrodes <- c("P7","P3","Pz","PO3","O1","Oz","O2","PO4","P4","P8")
+
+# Define ERP variables to pivot
+erp_vars <- c("p1", "n1", "p2", "p3")
+
+# For frontocentral electrodes: calculate mean(n1 - p1) per subject and group
+frontocentral_summary <- all_data %>%
+  filter(Electrode %in% frontocentral_electrodes) %>%
+  mutate(diff_n1_p1 = n1 - p1) %>%
+  group_by(S, Masker, Talker, WordType) %>%
+  summarise(mean_diff = mean(diff_n1_p1, na.rm = TRUE)) %>%
+  ungroup()
+
+
+ggplot(frontocentral_summary,
+       aes(Talker, mean_diff)) +
   facet_grid(WordType~Masker) +  
   geom_hline(yintercept = 0) +
   #geom_dotplot(aes(color = S, fill = S), binaxis = 'y', stackdir = 'center', alpha = 0.5) + 
