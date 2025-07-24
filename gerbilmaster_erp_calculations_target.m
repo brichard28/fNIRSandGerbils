@@ -1,8 +1,8 @@
-%% gerbilmaster_erp_calculations.m
+%% gerbilmaster_erp_calculations_target.m
 
 % Benjamin Richardson
 % Code to calculate P1, N1, P2 and P3 amplitudes and latencies for
-% scrambled speech experiment.
+% scrambled speech experiment. In response to Target
 
 % Saves to csv file for analysis in R
 

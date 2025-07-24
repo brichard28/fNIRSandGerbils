@@ -56,7 +56,7 @@ for isubject = 1:size(curr_subject_ID,1) % For each subject....
     %% Loop through each trial, and calculate hits and false alarms
 
     n_trials = length(trials); % find number of trials
-    threshold_window_start = 0.5; % time in seconds from onset of word for start of hit/FA windows
+    threshold_window_start = 0.3; % time in seconds from onset of word for start of hit/FA windows
     threshold_window_end = 1.5; % time in seconds from onset of word for end of hit/FA windows
     double_click_threshold = 0.75; % distance between clicks at which it would be decided that it is a double click
 
@@ -401,6 +401,6 @@ for isubject = 1:size(curr_subject_ID,1)
 end
 
 
-writematrix(all_hitrates,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_Hit_Rates_Exp_1.csv')
-writematrix(all_FArates,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_FA_Rates_Exp_1.csv')
-writematrix(all_dprimes,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_D_primes_Exp_1.csv')
+writematrix(all_hitrates,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_Hit_Rates_Exp_2.csv')
+writematrix(all_FArates,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_FA_Rates_Exp_2.csv')
+writematrix(all_dprimes,'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_D_primes_Exp_2.csv')

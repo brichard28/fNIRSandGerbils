@@ -216,10 +216,6 @@ while practicetrial <= numpracticetrials
                 thisFilteredSound = filter(bLow, aLow, y);
                 thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
                 filtered_word = filtered_word + thisFilteredSound;
-            elseif mod(iFilter,2) == 0
-                thisFilteredSound = filter(bLow, aLow, y);
-                thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
-                filtered_word = filtered_word + thisFilteredSound;
             end
         end
 
@@ -338,10 +334,6 @@ while practicetrial <= numpracticetrials
             [bHigh, aHigh] = butter(order, lowedge/(fs/2), 'high');
             thisFilteredSound = zeros(1, length(y));
             if mod(iFilter,2) == 0
-                thisFilteredSound = filter(bLow, aLow, y);
-                thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
-                filtered_word = filtered_word + thisFilteredSound;
-            elseif mod(iFilter,2) == 1
                 thisFilteredSound = filter(bLow, aLow, y);
                 thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
                 filtered_word = filtered_word + thisFilteredSound;
@@ -473,10 +465,6 @@ while trial <= numtrials
                 thisFilteredSound = filter(bLow, aLow, y);
                 thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
                 filtered_word = filtered_word + thisFilteredSound;
-            elseif mod(iFilter,2) == 0
-                thisFilteredSound = filter(bLow, aLow, y);
-                thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
-                filtered_word = filtered_word + thisFilteredSound;
             end
         end
 
@@ -599,10 +587,6 @@ while trial <= numtrials
             [bHigh, aHigh] = butter(order, lowedge/(fs/2), 'high');
             thisFilteredSound = zeros(1, length(y));
             if mod(iFilter,2) == 0
-                thisFilteredSound = filter(bLow, aLow, y);
-                thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
-                filtered_word = filtered_word + thisFilteredSound;
-            elseif mod(iFilter,2) == 1
                 thisFilteredSound = filter(bLow, aLow, y);
                 thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
                 filtered_word = filtered_word + thisFilteredSound;

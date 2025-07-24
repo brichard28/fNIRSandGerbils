@@ -215,10 +215,6 @@ while practicetrial <= numpracticetrials
                 thisFilteredSound = filter(bLow, aLow, y);
                 thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
                 filtered_word = filtered_word + thisFilteredSound;
-            elseif mod(iFilter,2) == 0
-                thisFilteredSound = filter(bLow, aLow, y);
-                thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
-                filtered_word = filtered_word + thisFilteredSound;
             end
         end
 
@@ -258,7 +254,7 @@ while practicetrial <= numpracticetrials
     num_target_words = num_target_color_words + num_target_object_words;
     target_onsets = (end_time-start_time).*rand(num_target_words,1) + start_time; % choose target word onset times, making sure they are at least 1 second apart and at least wordlength before the end of stimulus
     target_onsets = sort(target_onsets);
-    % target words will be prohibited from being 50 ms on either side of a masker word onset
+    % target words will be prohibited from being 80 ms on either side of a masker word onset
     tOnset_low = tOnset - 0.08;
     tOnset_high = tOnset + 0.08;
     onset_flag = 0;
@@ -324,10 +320,6 @@ while practicetrial <= numpracticetrials
             [bHigh, aHigh] = butter(order, lowedge/(fs/2), 'high');
             thisFilteredSound = zeros(1, length(y));
             if mod(iFilter,2) == 0
-                thisFilteredSound = filter(bLow, aLow, y);
-                thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
-                filtered_word = filtered_word + thisFilteredSound;
-            elseif mod(iFilter,2) == 1
                 thisFilteredSound = filter(bLow, aLow, y);
                 thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
                 filtered_word = filtered_word + thisFilteredSound;
@@ -459,10 +451,6 @@ while trial <= numtrials
                 thisFilteredSound = filter(bLow, aLow, y);
                 thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
                 filtered_word = filtered_word + thisFilteredSound;
-            elseif mod(iFilter,2) == 0
-                thisFilteredSound = filter(bLow, aLow, y);
-                thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
-                filtered_word = filtered_word + thisFilteredSound;
             end
         end
 
@@ -568,10 +556,6 @@ while trial <= numtrials
             [bHigh, aHigh] = butter(order, lowedge/(fs/2), 'high');
             thisFilteredSound = zeros(1, length(y));
             if mod(iFilter,2) == 0
-                thisFilteredSound = filter(bLow, aLow, y);
-                thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
-                filtered_word = filtered_word + thisFilteredSound;
-            elseif mod(iFilter,2) == 1
                 thisFilteredSound = filter(bLow, aLow, y);
                 thisFilteredSound = filter(bHigh, aHigh, thisFilteredSound);
                 filtered_word = filtered_word + thisFilteredSound;

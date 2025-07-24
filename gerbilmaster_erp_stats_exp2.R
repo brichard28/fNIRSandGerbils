@@ -21,8 +21,9 @@ names(p2_data)[names(p2_data) == "Amplitude"] <- "p2"
 names(p3_data)[names(p3_data) == "Amplitude"] <- "p3"
 
 # Merge all data frames on the common identifier columns
-all_data <- Reduce(function(x, y) merge(x, y, by = c("S", "Masker", "Talker", "WordType")), list(p1_data, n1_data, p2_data, p3_data))
+all_data <- Reduce(function(x, y) merge(x, y, by = c("S", "Masker", "Talker", "WordType","Electrode")), list(p1_data, n1_data, p2_data, p3_data))
 
+#frontocentral_electrodes <- c("Fp1","AF3","F7","F3","FC1","FC5","FC6","FC2","F4","F8","AF4","Fp2","Fz","Cz")
 frontocentral_electrodes <- c("Fz","Cz")
 parietooccipital_electrodes <- c("P7","P3","Pz","PO3","O1","Oz","O2","PO4","P4","P8")
 
@@ -37,6 +38,12 @@ frontocentral_summary <- all_data %>%
   summarise(mean_diff = mean(diff_n1_p1, na.rm = TRUE)) %>%
   ungroup()
 
+# For parietooccipital electrodes: calculate mean p3 per subject and group
+parietooccipital_summary <- all_data %>%
+  filter(Electrode %in% parietooccipital_electrodes) %>%
+  group_by(S, Masker, Talker, WordType) %>%
+  summarise(mean_p3 = mean(p3, na.rm = TRUE)) %>%
+  ungroup()
 
 ggplot(frontocentral_summary,
        aes(Talker, mean_diff)) +
@@ -61,13 +68,12 @@ ggplot(frontocentral_summary,
         axis.ticks.y = element_blank()) +
   labs(title = "N1 - P1 by Condition Experiment 2", 
        x = "", y = "Amplitude (mV)") +
-  ylim(c(-9,2))
+  ylim(c(-8,3))
 
 
 
-
-ggplot(all_data,
-       aes(Talker, p3)) +
+ggplot(parietooccipital_summary,
+       aes(Talker, mean_p3)) +
   facet_grid(WordType~Masker) +  
   geom_hline(yintercept = 0) +
   #geom_dotplot(aes(color = S, fill = S), binaxis = 'y', stackdir = 'center', alpha = 0.5) + 
@@ -87,6 +93,16 @@ ggplot(all_data,
         panel.border = element_rect(colour = "black", fill=NA),
         axis.ticks.x = element_line(size = 0.5),
         axis.ticks.y = element_blank()) +
-  labs(title = "P300 by Condition Experiment 2", 
+  labs(title = "P3 by Condition Experiment 2", 
        x = "", y = "Amplitude (mV)") +
-  ylim(c(-2.5,6))
+  ylim(c(-1,6))
+
+
+model_p1n1_exp2 <- mixed(mean_diff ~ Masker*Talker*WordType + (1|S),data= frontocentral_summary,control = lmerControl(optimizer = "bobyqa"))
+
+model_p1n1_exp2
+
+model_p3_exp2 <- mixed(mean_p3 ~ Masker*Talker*WordType + (1|S),data= parietooccipital_summary,control = lmerControl(optimizer = "bobyqa"))
+
+model_p3_exp2
+
