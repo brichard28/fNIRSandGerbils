@@ -101,11 +101,19 @@ for experiment = 1:2
 
 
         % Sort masker responses by color vs. object --> P300?
-        all_masker_unscrambled_color_st(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_masker(:).Condition,[4]))),3));
-        all_masker_unscrambled_object_st(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,object)'.*ismember(ERP_info_masker(:).Condition,[4]))),3));
-        all_masker_unscrambled_color_dt(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_masker(:).Condition,[3]))),3));
-        all_masker_unscrambled_object_dt(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ismember(ERP_info_target(:).Word,object_words)'.*ERP_info_masker(:).Condition,[3]))),3));
+        all_masker_unscrambled_color_st(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Word,color_words)'.*ismember(ERP_info_masker(:).Condition,[4]))),3));
+        all_masker_unscrambled_object_st(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Word,object_words)'.*ismember(ERP_info_masker(:).Condition,[4]))),3));
+        all_masker_unscrambled_color_dt(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Word,color_words)'.*ismember(ERP_info_masker(:).Condition,[3]))),3));
+        all_masker_unscrambled_object_dt(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ismember(ERP_info_masker(:).Word,object_words)'.*ERP_info_masker(:).Condition,[3]))),3));
 
+
+
+        % sort target responses by color vs. object and responded vs. not
+        % responded
+        all_target_color_responded 
+        all_target_color_not_responded
+        all_target_object_responded
+        all_target_color_not_responed
 
 
         % Plot averages for each subject
@@ -318,7 +326,88 @@ for experiment = 1:2
     legend({'Scrambled','Unscrambled'},'FontSize',20)
 
 
-    sgtitle(append('Frontocentral ERP to Masker Stream Exp. ',num2str(experiment)),'FontSize',20)
+    sgtitle(append('ALL Frontocentral ERP to Masker Stream Exp. ',num2str(experiment)),'FontSize',20)
 
-    %% Target red/white vs. green/blue
+    %% Target red/white vs. green/blue and object strong onset vs. object weak onset
+    figure;
+    subplot(1,2,1)
+    hold on
+    this_scrambled_data = squeeze(mean(all_target_blue_green(:,frontocentral_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_target_red_white(:,frontocentral_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
+    ylim([-3.5,3.5])
+    title('Color Words','FontSize',20)
+    legend({'Blue/Green','Red/White'},'FontSize',20)
+
+    subplot(1,2,2)
+    hold on
+    this_scrambled_data = squeeze(mean(all_target_bag_desk_glove_pen_table_toy(:,frontocentral_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_target_hat_card_chair_shoe_sock_spoon(:,frontocentral_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
+    ylim([-3.5,3.5])
+    title('Object Words','FontSize',20)
+    legend({'Strong Onset','Weak Onset'},'FontSize',20)
+
+    sgtitle(append('ALL Conditions Frontocentral ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',20)
+
+    %% Target Parietooccipital response when responded vs. not
+
+
+
+
+
+    %% Masker unscrambled color vs. object (frontocentral)
+    num_subjects = size(curr_subject_ID,1);
+    figure;
+    subplot(1,2,1)
+    hold on
+    this_scrambled_data = squeeze(mean(all_masker_unscrambled_color_st(:,frontocentral_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_masker_unscrambled_object_st(:,frontocentral_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-b'})
+    ylim([-1,1])
+    xlim([erp_window_start_time,erp_window_end_time])
+    title('Same Talker','FontSize',20)
+
+    subplot(1,2,2)
+    hold on
+    this_scrambled_data = squeeze(mean(all_masker_unscrambled_color_dt(:,frontocentral_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_masker_unscrambled_object_dt(:,frontocentral_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-b'})
+    ylim([-1,1])
+    xlim([erp_window_start_time,erp_window_end_time])
+    title('Different Talker','FontSize',20)
+    legend({'Color','Object'},'FontSize',20)
+    sgtitle(append('Frontocentral ERP to Unscrambled Masker Stream Exp. ',num2str(experiment)),'FontSize',20)
+
+    %% Masker unscrambled color vs. object (parietooccipital)
+    num_subjects = size(curr_subject_ID,1);
+    figure;
+    subplot(1,2,1)
+    hold on
+    this_scrambled_data = squeeze(mean(all_masker_unscrambled_color_st(:,parietooccipital_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_masker_unscrambled_object_st(:,parietooccipital_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-b'})
+    ylim([-1,1])
+    xlim([erp_window_start_time,erp_window_end_time])
+    title('Same Talker','FontSize',20)
+
+    subplot(1,2,2)
+    hold on
+    this_scrambled_data = squeeze(mean(all_masker_unscrambled_color_dt(:,parietooccipital_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_masker_unscrambled_object_dt(:,parietooccipital_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-g'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-b'})
+    ylim([-1,1])
+    xlim([erp_window_start_time,erp_window_end_time])
+    title('Different Talker','FontSize',20)
+    legend({'Color','Object'},'FontSize',20)
+
+
+    sgtitle(append('Parietooccipital ERP to Unscrambled Masker Stream Exp. ',num2str(experiment)),'FontSize',20)
+
 end

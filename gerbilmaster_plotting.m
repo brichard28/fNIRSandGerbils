@@ -33,7 +33,12 @@ for experiment = 1:2
     all_masker_unscrambled_object_st = [];
     all_masker_unscrambled_color_dt = [];
     all_masker_unscrambled_object_dt = [];
-        
+
+    all_target_color_responded = [];
+    all_target_color_not_responded = [];
+    all_target_object_responded = [];
+    all_target_object_not_responded = [];
+
     num_erps_removed = zeros(size(curr_subject_ID,1));
 
     noise_thresh = 100;
@@ -106,6 +111,14 @@ for experiment = 1:2
         all_masker_unscrambled_color_dt(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Word,color_words)'.*ismember(ERP_info_masker(:).Condition,[3]))),3));
         all_masker_unscrambled_object_dt(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ismember(ERP_info_masker(:).Word,object_words)'.*ERP_info_masker(:).Condition,[3]))),3));
 
+
+
+        % sort target responses by color vs. object and responded vs. not
+        % responded
+        all_target_color_responded(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[1])')),3));
+        all_target_color_not_responded(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[0])')),3));
+        all_target_object_responded(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,object_words)'.*ismember(ERP_info_target(:).Responded,[1])')),3));
+        all_target_object_not_responded(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,object_words)'.*ismember(ERP_info_target(:).Responded,[0])')),3));
 
 
         % Plot averages for each subject
@@ -344,9 +357,53 @@ for experiment = 1:2
 
     sgtitle(append('ALL Conditions Frontocentral ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',20)
 
-    %% Target Parietooccipital response when responded vs. not
-    
+    %% Target Frontocentral response when responded vs. not
+    figure;
+    subplot(1,2,1)
+    hold on
+    this_scrambled_data = squeeze(mean(all_target_color_responded(:,frontocentral_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_target_color_not_responded(:,frontocentral_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
+    ylim([-3.5,3.5])
+    title('Color Words','FontSize',20)
+    legend({'Responded','Did Not Respond'},'FontSize',20)
 
+    subplot(1,2,2)
+    hold on
+    this_scrambled_data = squeeze(mean(all_target_object_responded(:,frontocentral_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_target_object_not_responded(:,frontocentral_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
+    ylim([-3.5,3.5])
+    title('Object Words','FontSize',20)
+    legend({'Responded (FA)','Did Not Respond'},'FontSize',20)
+
+    sgtitle(append('ALL Conditions Frontocentral ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',20)
+
+     %% Target Parietooccipital response when responded vs. not
+    figure;
+    subplot(1,2,1)
+    hold on
+    this_scrambled_data = squeeze(mean(all_target_color_responded(:,parietooccipital_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_target_color_not_responded(:,parietooccipital_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
+    ylim([-3.5,3.5])
+    title('Color Words','FontSize',20)
+    legend({'Responded','Did Not Respond'},'FontSize',20)
+
+    subplot(1,2,2)
+    hold on
+    this_scrambled_data = squeeze(mean(all_target_object_responded(:,parietooccipital_channels,:),2));
+    this_unscrambled_data = squeeze(mean(all_target_object_not_responded(:,parietooccipital_channels,:),2));
+    shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
+    shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
+    ylim([-3.5,3.5])
+    title('Object Words','FontSize',20)
+    legend({'Responded (FA)','Did Not Respond'},'FontSize',20)
+
+    sgtitle(append('ALL Conditions Parietooccipital ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',20)
 
 
 
