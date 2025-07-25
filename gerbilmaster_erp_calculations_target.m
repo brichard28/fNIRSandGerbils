@@ -15,17 +15,13 @@ color_words = {'red','white','green','blue'};
 
 all_scrambled_by_color_onset_st = [];
 all_scrambled_by_object_onset_st = [];
-all_scrambled_by_masker_onset_st = [];
 all_unscrambled_by_color_onset_st = [];
 all_unscrambled_by_object_onset_st = [];
-all_unscrambled_by_masker_onset_st = [];
 
 all_scrambled_by_color_onset_dt = [];
 all_scrambled_by_object_onset_dt = [];
-all_scrambled_by_masker_onset_dt = [];
 all_unscrambled_by_color_onset_dt = [];
 all_unscrambled_by_object_onset_dt = [];
-all_unscrambled_by_masker_onset_dt = [];
 
 erp_window_start_time = -100; % 100 ms before onset of word
 erp_window_end_time = 750; % 750 ms after onset of word
@@ -124,74 +120,70 @@ for isubject = 1:size(curr_subject_ID,1)
 
     % Split up erps by condition, take the mean
     for ichannel = 1:32
-    all_scrambled_by_color_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[2]))),3));
-    all_scrambled_by_object_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[2]))),3));
-    all_scrambled_by_masker_onset_st(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Condition,[2]))),3));
+        all_scrambled_by_color_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[2]))),3));
+        all_scrambled_by_object_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[2]))),3));
 
-    all_unscrambled_by_color_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[4]))),3));
-    all_unscrambled_by_object_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[4]))),3));
-    all_unscrambled_by_masker_onset_st(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Condition,[4]))),3));
+        all_unscrambled_by_color_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[4]))),3));
+        all_unscrambled_by_object_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[4]))),3));
 
-    all_scrambled_by_color_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1]))),3));
-    all_scrambled_by_object_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1]))),3));
-    all_scrambled_by_masker_onset_dt(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Condition,[1]))),3));
+        all_scrambled_by_color_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1]))),3));
+        all_scrambled_by_object_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1]))),3));
 
-    all_unscrambled_by_color_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[3]))),3));
-    all_unscrambled_by_object_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[3]))),3));
-    all_unscrambled_by_masker_onset_dt(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Condition,[3]))),3));
+        all_unscrambled_by_color_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[3]))),3));
+        all_unscrambled_by_object_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[3]))),3));
 
 
 
-    condition_names = {'scrambled_dt','scrambled_st','unscrambled_dt','unscrambled_st'};
-    % append to structures
-    all_subs_p1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_n1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p2(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p3(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_dt(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        condition_names = {'scrambled_dt','scrambled_st','unscrambled_dt','unscrambled_st'};
+        % append to structures
+        all_subs_p1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_n1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p2(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p3(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_dt(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
 
-    structrow = structrow + 1;
-    all_subs_p1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_n1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p2(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p3(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_dt(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        structrow = structrow + 1;
+        all_subs_p1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_n1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p2(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p3(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_dt(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
 
-    structrow = structrow + 1;
-    all_subs_p1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_n1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p2(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p3(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_st(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        structrow = structrow + 1;
+        all_subs_p1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_n1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p2(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p3(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_scrambled_by_color_onset_st(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
 
-    structrow = structrow + 1;
-    all_subs_p1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_n1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p2(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p3(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_st(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        structrow = structrow + 1;
+        all_subs_p1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_n1(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p2(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p3(structrow) = struct('S',subID,'Masker',"Scrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_scrambled_by_object_onset_st(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
 
-    structrow = structrow + 1;
-    all_subs_p1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_n1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p2(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p3(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_dt(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        structrow = structrow + 1;
+        all_subs_p1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_n1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p2(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_dt(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p3(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_dt(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
 
-    structrow = structrow + 1;
-    all_subs_p1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_n1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p2(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p3(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_dt(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        structrow = structrow + 1;
+        all_subs_p1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_n1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p2(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_dt(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p3(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Different",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_dt(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
 
-    structrow = structrow + 1;
-    all_subs_p1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_n1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p2(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p3(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_st(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        structrow = structrow + 1;
+        all_subs_p1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_n1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p2(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_st(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p3(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Color",'Amplitude',mean(all_unscrambled_by_color_onset_st(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
 
-    structrow = structrow + 1;
-    all_subs_p1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_n1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p2(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
-    all_subs_p3(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_st(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        structrow = structrow + 1;
+        all_subs_p1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_p1_index - round(peak_integration_time*fs):this_sub_p1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_n1(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_n1_index - round(peak_integration_time*fs):this_sub_n1_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p2(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_st(isubject,frontocentral_channels,this_sub_p2_index - round(peak_integration_time*fs):this_sub_p2_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
+        all_subs_p3(structrow) = struct('S',subID,'Masker',"Unscrambled",'Talker',"Same",'WordType',"Object",'Amplitude',mean(all_unscrambled_by_object_onset_st(isubject,parietooccipital_channels,this_sub_p3_index - round(peak_integration_time*fs):this_sub_p3_index + round(peak_integration_time*fs)),'all'),"Electrode",electrode_names(ichannel));
 
-    structrow = structrow + 1;
+        structrow = structrow + 1;
     end
     % Add to figures
     figure(all_subs_fig_p1n1p2)
@@ -210,7 +202,7 @@ for isubject = 1:size(curr_subject_ID,1)
 
 end
 
-writetable(struct2table(all_subs_p1),'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p1_exp2.csv')
-writetable(struct2table(all_subs_n1),'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_n1_exp2.csv')
-writetable(struct2table(all_subs_p2),'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p2_exp2.csv')
-writetable(struct2table(all_subs_p3),'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p3_exp2.csv')
+writetable(struct2table(all_subs_p1),'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p1_target_exp2.csv')
+writetable(struct2table(all_subs_n1),'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_n1_target_exp2.csv')
+writetable(struct2table(all_subs_p2),'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p2_target_exp2.csv')
+writetable(struct2table(all_subs_p3),'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p3_target_exp2.csv')

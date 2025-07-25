@@ -21,10 +21,9 @@ else
 end
 
 
-%curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064'); % NOT Amplitude modulated
-%curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080');%); % amplitude modulated masker
-% 
-curr_subject_ID = char('7082');
+%curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081'); % NOT Amplitude modulated
+%curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080','7081','7082');%); % amplitude modulated masker
+curr_subject_ID = char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081','7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080','7081','7082');
 
 % Set analysis parameters
 erp_window_start_time = -100; % 100 ms before onset of word
@@ -48,9 +47,13 @@ for isubject = 1:size(curr_subject_ID,1)
     % Read in click times, find the rows in the table for this subject
     all_click_info = readtable(dir_fnirsandgerbils,'FileType','spreadsheet','Format','auto');
     which_rows_this_subject = find(all_click_info.S == string(curr_subject_ID(isubject,:))); % find the rows in the spreadsheet which belong to this subject
-    conditions = all_click_info.Condition(which_rows_this_subject); % conditions by trial for this subject
     condition_names = {'scrambled_dt','scrambled_st','unscrambled_dt','unscrambled_st'};
     this_subject_table = all_click_info(which_rows_this_subject,:);
+    trials = all_click_info.Trial(which_rows_this_subject); % trial indices for this subject
+    conditions = all_click_info.Condition(which_rows_this_subject); % conditions by trial for this subject
+    click_times = all_click_info(which_rows_this_subject,9:end); % click times by trial for this subject. will include NaNs! accounted for later
+    soundfiles_by_trial = all_click_info.Soundfile(which_rows_this_subject); % soundfile names by trial for this subject
+
 
     % Create empty arrays for ERPs
     data_by_masker_onset = [];
@@ -62,8 +65,8 @@ for isubject = 1:size(curr_subject_ID,1)
 
     % Create empty arrays for info for each ERP
     % Will contain subID, trial, and word (if target)
-    ERP_info_masker = struct('SubID',{},'Trial',{});
-    ERP_info_target = struct('SubID',{},'Trial',{},'Word',{});
+    ERP_info_masker = struct('SubID',{},'Trial',{},'Word',{});
+    ERP_info_target = struct('SubID',{},'Trial',{},'Word',{},'Responded',{});
     ERP_info_button_press = struct('SubID',{},'Trial',{});
 
     % Load EEG for this subject
@@ -89,11 +92,11 @@ for isubject = 1:size(curr_subject_ID,1)
     noise_thresh = 100; % 80;
 
     for itrial = 1:size(this_EEG.data,3)% for each trial (should be 144)
-        if mod(itrial,12) == 0 
+        if mod(itrial,12) == 0
             disp(itrial)
         end
         icondition = conditions(itrial);
-        
+
         %this_trial_target_onsets = all_target_onsets(itrial).onsets;
         % actually this_trial_target_onsets should be the one that matches
         % the SOUNDFILE, not the trial number. They were not played in that
@@ -122,16 +125,16 @@ for isubject = 1:size(curr_subject_ID,1)
         this_trial_click_times(isnan(this_trial_click_times)) = [];
         for iclick = 1:length(this_trial_click_times) % for each target word onset...
             resampled_search_time = floor(this_trial_click_times(iclick)*1000);
-            button_press_delay = 0; % ms 
+            button_press_delay = 0; % ms
             [~,start_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_start_time + button_press_delay))); %
             [~,end_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_end_time)));%
 
 
-             if end_time - start_time == 218
+            if end_time - start_time == 218
                 end_time = end_time - 1;
             end
 
-             % Reject epochs with amplitude above +/- 100 uV
+            % Reject epochs with amplitude above +/- 100 uV
             if any(abs(detrend(these_epochs(:,start_time:end_time,itrial))) > noise_thresh,'all')
                 %disp('ERP rejected')
                 continue
@@ -154,9 +157,9 @@ for isubject = 1:size(curr_subject_ID,1)
 
         end
 
-        %% ISOLATE TARGET WORD ONSETS 
+        %% ISOLATE TARGET WORD ONSETS
         % Within Target Onsets
-        
+
         for ionset = 1:length(this_trial_target_onsets) % for each target word onset...
             resampled_search_time = floor(this_trial_target_onsets(ionset)*1000);
             [~,start_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_start_time))); %
@@ -177,7 +180,7 @@ for isubject = 1:size(curr_subject_ID,1)
                 %disp('ERP rejected')
                 continue
             end
-             % Store target information in the cell array
+            % Store target information in the cell array
             target_info{end+1,1} = subID; % Subject ID
             target_info{end,2} = this_trial_target_onsets(ionset); % Target Onset
             target_info{end,3} = resampled_audio_time(start_time); % Start Time
@@ -209,7 +212,25 @@ for isubject = 1:size(curr_subject_ID,1)
             else
                 data_by_button_press_far = cat(3,data_by_button_press_far,this_erp);
             end
-          
+
+            % If there was a click in response to this target word, save it
+            % as such
+            threshold_window_start = 0.3; % time in seconds from onset of word for start of hit/FA windows
+            threshold_window_end = 1.5; % time in seconds from onset of word for end of hit/FA windows
+            double_click_threshold = 0.75; % distance between clicks at which it would be decided that it is a double click
+            current_click_times = table2array(click_times(itrial,:));
+            current_click_times = current_click_times(~isnan(current_click_times));
+            curr_distances = diff(current_click_times);
+            clicks_to_reject = find(curr_distances < double_click_threshold);
+            current_click_times(clicks_to_reject + 1) = [];
+
+            current_click_distances = current_click_times - this_trial_target_onsets(ionset); % ...find the time index of that click...
+            current_click_distances(current_click_distances < 0) = [];
+            if sum(threshold_window_start <= current_click_distances & current_click_distances <= threshold_window_end) > 0
+                ERP_info_target.Responded = [ERP_info_target.Responded; 1];
+            else
+                ERP_info_target.Responded = [ERP_info_target.Responded; 0];
+            end
         end
 
         %% ISOLATE MASKER WORD ONSETS
@@ -241,10 +262,12 @@ for isubject = 1:size(curr_subject_ID,1)
             if ~isempty(ERP_info_masker)
                 ERP_info_masker.SubID = [ERP_info_masker.SubID; curr_subject_ID(isubject,:)];
                 ERP_info_masker.Trial = [ERP_info_masker.Trial, itrial];
+                ERP_info_masker.Word = [ERP_info_masker.Word; all_masker_word_order(itrial,ionset)];
                 ERP_info_masker.Condition = [ERP_info_masker.Condition, conditions(itrial)];
             else
                 ERP_info_masker(1).SubID = curr_subject_ID(isubject,:);
                 ERP_info_masker(1).Trial = itrial;
+                ERP_info_masker(1).Word = all_masker_word_order(itrial,ionset);
                 ERP_info_masker(1).Condition = conditions(itrial);
             end
 
@@ -277,7 +300,7 @@ for isubject = 1:size(curr_subject_ID,1)
         data_by_button_press_baselined(ichannel,:,:) = data_by_button_press(ichannel,:,:) - mean(data_by_button_press(ichannel,baseline_start_index_buttonpress:baseline_end_index_buttonpress,:),'all');
         data_by_target_onset_baselined(ichannel,:,:) = data_by_target_onset(ichannel,:,:) - mean(data_by_target_onset(ichannel,baseline_start_index:baseline_end_index,:),'all');
         data_by_masker_onset_baselined(ichannel,:,:) = data_by_masker_onset(ichannel,:,:) - mean(data_by_masker_onset(ichannel,baseline_start_index:baseline_end_index,:),'all');
-        
+
         data_by_button_press_near_baselined(ichannel,:,:) = data_by_button_press_near(ichannel,:,:) - mean(data_by_button_press_near(ichannel,baseline_start_index:baseline_end_index,:),'all');
         data_by_button_press_far_baselined(ichannel,:,:) = data_by_button_press_far(ichannel,:,:) - mean(data_by_button_press_far(ichannel,baseline_start_index:baseline_end_index,:),'all');
 
@@ -304,7 +327,7 @@ for isubject = 1:size(curr_subject_ID,1)
     all_scrambled_by_color_onset(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1,2]))),3));
     all_scrambled_by_object_onset(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1,2]))),3));
     all_scrambled_by_masker_onset(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Condition,[1,2]))),3));
-    
+
     all_unscrambled_by_color_onset(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[3,4]))),3));
     all_unscrambled_by_object_onset(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[3,4]))),3));
     all_unscrambled_by_masker_onset(isubject,:,:) = squeeze(mean(data_by_masker_onset_baselined(:,:,logical(ismember(ERP_info_masker(:).Condition,[3,4]))),3));
@@ -345,50 +368,50 @@ for isubject = 1:size(curr_subject_ID,1)
     ylim([-8,8])
     sgtitle(subID)
 
-%    % Plot whole trial EEG
-%     figure(2);
-%     subplot(size(curr_subject_ID,1),1,isubject)
-%     plot(eeg_time,mean(these_epochs(frontocentral_channels,:,ismember(conditions,[1,2])),[1,3]))
-%     hold on;plot(eeg_time,mean(these_epochs(frontocentral_channels,:,ismember(conditions,[3,4])),[1,3]))
-%     %legend({'Scrambled','Unscrambled'})
-%     if isubject == size(curr_subject_ID,1)
-%         xlabel('Time (ms)','FontSize',18)
-%     elseif isubject == round(size(curr_subject_ID,1)/2)
-%         ylabel('Voltage (mV)','FontSize',18)
-%     end
-% 
-%     % Plot button press
-%     figure(3);
-%     subplot(size(curr_subject_ID,1),1,isubject)
-%     plot(single_onset_time,squeeze(mean(all_data_button_press(isubject,1,:,:),[2,4])))
-%     if isubject == size(curr_subject_ID,1)
-%         xlabel('Time (ms)','FontSize',18)
-%     elseif isubject == round(size(curr_subject_ID,1)/2)
-%         ylabel('Voltage (mV)','FontSize',18)
-%     end
-%     title('Button Press at Cz')
+    %    % Plot whole trial EEG
+    %     figure(2);
+    %     subplot(size(curr_subject_ID,1),1,isubject)
+    %     plot(eeg_time,mean(these_epochs(frontocentral_channels,:,ismember(conditions,[1,2])),[1,3]))
+    %     hold on;plot(eeg_time,mean(these_epochs(frontocentral_channels,:,ismember(conditions,[3,4])),[1,3]))
+    %     %legend({'Scrambled','Unscrambled'})
+    %     if isubject == size(curr_subject_ID,1)
+    %         xlabel('Time (ms)','FontSize',18)
+    %     elseif isubject == round(size(curr_subject_ID,1)/2)
+    %         ylabel('Voltage (mV)','FontSize',18)
+    %     end
+    %
+    %     % Plot button press
+    %     figure(3);
+    %     subplot(size(curr_subject_ID,1),1,isubject)
+    %     plot(single_onset_time,squeeze(mean(all_data_button_press(isubject,1,:,:),[2,4])))
+    %     if isubject == size(curr_subject_ID,1)
+    %         xlabel('Time (ms)','FontSize',18)
+    %     elseif isubject == round(size(curr_subject_ID,1)/2)
+    %         ylabel('Voltage (mV)','FontSize',18)
+    %     end
+    %     title('Button Press at Cz')
 
     % button press topoplot
-%     figure;
-%     topoplot_indices = round(0:0.1*fs:(((erp_window_end_time - erp_window_start_time)/1000)*fs));
-% topoplot_indices(1) = 1;
-% topoplot_times = -100:50:750;
-% 
-% iplot = 1;
-% itime = 1;
-% for itopo = topoplot_indices
-%     subplot(1,length(topoplot_indices)+ 1,iplot);
-%     this_data = squeeze(mean(all_data_button_this_subject(:,itopo,:),[2,3]));
-%     topoplot(this_data,this_EEG.chanlocs,'maplimits',[-10, 5]);
-%     title([num2str(topoplot_times(itime)),' ms'])
-%     iplot = iplot + 1;
-%     itime = itime + 1;
-% end
-% colorbar
+    %     figure;
+    %     topoplot_indices = round(0:0.1*fs:(((erp_window_end_time - erp_window_start_time)/1000)*fs));
+    % topoplot_indices(1) = 1;
+    % topoplot_times = -100:50:750;
+    %
+    % iplot = 1;
+    % itime = 1;
+    % for itopo = topoplot_indices
+    %     subplot(1,length(topoplot_indices)+ 1,iplot);
+    %     this_data = squeeze(mean(all_data_button_this_subject(:,itopo,:),[2,3]));
+    %     topoplot(this_data,this_EEG.chanlocs,'maplimits',[-10, 5]);
+    %     title([num2str(topoplot_times(itime)),' ms'])
+    %     iplot = iplot + 1;
+    %     itime = itime + 1;
+    % end
+    % colorbar
 
 
-%% SAVE INFO FOR THIS SUBBY
-save(append('Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'),'data_by_masker_onset_baselined','data_by_target_onset_baselined','data_by_button_press_baselined','data_by_button_press_near_baselined','data_by_button_press_far_baselined','ERP_info_button_press','ERP_info_masker','ERP_info_target','-v7.3')
+    %% SAVE INFO FOR THIS SUBBY
+    save(append('C:\Users\benri\Downloads\Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'),'data_by_masker_onset_baselined','data_by_target_onset_baselined','data_by_button_press_baselined','data_by_button_press_near_baselined','data_by_button_press_far_baselined','ERP_info_button_press','ERP_info_masker','ERP_info_target','-v7.3')
 
 end
 
