@@ -10,10 +10,10 @@ library(dplyr)
 library(rhdf5)
 # Read the .mat file
 library(R.matlab)
-p1_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p1_exp1.csv')
-n1_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_n1_exp1.csv')
-p2_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p2_exp1.csv')
-p3_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p3_exp1.csv')
+p1_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p1_target_exp1.csv')
+n1_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_n1_target_exp1.csv')
+p2_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p2_target_exp1.csv')
+p3_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p3_target_exp1.csv')
 
 names(p1_data)[names(p1_data) == "Amplitude"] <- "p1"
 names(n1_data)[names(n1_data) == "Amplitude"] <- "n1"
@@ -23,10 +23,12 @@ names(p3_data)[names(p3_data) == "Amplitude"] <- "p3"
 # Merge all data frames on the common identifier columns
 all_data <- Reduce(function(x, y) merge(x, y, by = c("S", "Masker", "Talker", "WordType","Electrode")), list(p1_data, n1_data, p2_data, p3_data))
 
-frontocentral_electrodes <- c("Fp1","AF3","F7","F3","FC1","FC5","FC6","FC2","F4","F8","AF4","Fp2","Fz","Cz")
-#frontocentral_electrodes <- c("Fz","Cz")
-parietooccipital_electrodes <- c("P7","P3","Pz","PO3","O1","Oz","O2","PO4","P4","P8")
-#parietooccipital_electrodes <- c("Pz")
+# Organize Factors
+to.factor <- c("S", "Masker", "Talker", "WordType","Electrode")
+all_data[, to.factor] <- lapply(all_data[, to.factor], as.factor)
+
+frontocentral_electrodes <- c("Fz", "FC1", "FC2", "C3", "Cz", "C4", "CP1", "CP2")
+parietooccipital_electrodes <- c("P3", "Pz", "PO3", "O1", "Oz", "O2", "PO4", "P4")
 
 # Define ERP variables to pivot
 erp_vars <- c("p1", "n1", "p2", "p3")
@@ -68,7 +70,7 @@ ggplot(frontocentral_summary,
         axis.ticks.y = element_blank()) +
   labs(title = "N1 - P1 by Condition Experiment 1", 
        x = "", y = "Amplitude (mV)") +
-  ylim(c(-8,3))
+  ylim(c(-10,10))
 
 
 
@@ -96,7 +98,7 @@ ggplot(parietooccipital_summary,
         axis.ticks.y = element_blank()) +
   labs(title = "P3 by Condition Experiment 1", 
        x = "", y = "Amplitude (mV)") +
-  ylim(c(-1,6))
+  ylim(c(-10,10))
 
 
 model_p1n1_exp1 <- mixed(mean_diff ~ Masker*Talker*WordType + (1|S),data= frontocentral_summary,control = lmerControl(optimizer = "bobyqa"))

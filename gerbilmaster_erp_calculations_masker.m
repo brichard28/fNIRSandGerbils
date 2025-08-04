@@ -14,7 +14,7 @@
 
 % Saves to csv file for analysis in R
 
-experiment = 1;
+experiment = 2;
 if experiment == 1
     curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081'); % NOT Amplitude modulated
 elseif experiment == 2
@@ -58,8 +58,8 @@ for isubject = 1:size(curr_subject_ID,1)
 
 
     single_onset_time = linspace(erp_window_start_time,erp_window_end_time,size(data_by_masker_onset_baselined,2));
-    frontocentral_channels = [1,2,4,5,6,8,9,23,25,26,27,29,31,32];
-    parietooccipital_channels = 11:20;
+    frontocentral_channels = [31, 5, 26, 8, 32, 23, 9, 22]; % Fz, FC1, FC2, C3, Cz, C4, CP1, and CP2
+    parietooccipital_channels = [12, 13, 14, 15, 16, 17, 18, 19] ;%  P3, Pz, PO3, O1, Oz, O2, PO4, and P4
     cz_index = 32;
     fz_index = 31;
     pz_index = 13;
@@ -74,7 +74,7 @@ for isubject = 1:size(curr_subject_ID,1)
     [~,p2_start_index] = min(abs(single_onset_time - (250)));
     [~,p2_end_index] = min(abs(single_onset_time - (350)));
     [~,p3_start_index] = min(abs(single_onset_time - (350)));
-    [~,p3_end_index] = min(abs(single_onset_time - (700)));
+    [~,p3_end_index] = min(abs(single_onset_time - (600)));
 
     % take the average
     this_sub_fc_average = squeeze(mean(data_by_masker_onset_baselined([frontocentral_channels],:,:),[1,3]));

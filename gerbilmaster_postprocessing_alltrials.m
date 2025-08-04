@@ -20,18 +20,19 @@ else
     dir_fnirsandgerbils = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
 end
 
-
-%curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081'); % NOT Amplitude modulated
-%curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080','7081','7082');%); % amplitude modulated masker
-curr_subject_ID = char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081','7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080','7081','7082');
-
+experiment = 1;
+if experiment == 1
+    curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081'); % NOT Amplitude modulated
+elseif experiment == 2
+    curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080','7082');%); % amplitude modulated masker
+end
 % Set analysis parameters
 erp_window_start_time = -100; % 100 ms before onset of word
 erp_window_end_time = 750; % 750 ms after onset of word
 nsubjects = size(curr_subject_ID,1);
 word_length = 0.3;
 num_tot_trials = 144; % look into this
-frontocentral_channels = [1,2,4,5,6,8,9,23,25,26,27,29,31,32];
+frontocentral_channels = [31, 5, 26, 8, 32, 23, 9, 22]; % Fz, FC1, FC2, C3, Cz, C4, CP1, and CP2
 fs = 256;
 target_info={};
 subplot_counter = 0;

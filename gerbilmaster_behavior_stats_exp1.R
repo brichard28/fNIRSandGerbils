@@ -16,7 +16,7 @@ library(dplyr)
     ##    Hit Rates    ##
     ####################################################
 
-hit_rates <- read.csv("C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\Scrambled_Speech_Hit_Rates_Exp_1.csv", header = FALSE)
+hit_rates <- read.csv("C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\Scrambled_Speech_Hit_Rates_exp_1.csv", header = FALSE)
 S_col <- array(1:as.numeric(count(hit_rates)))
 
 # Add the new column at the first position
@@ -83,7 +83,7 @@ ggplot(hit_rates, aes(x = x_pos, y = HitRate, color = Masker, fill = Masker)) +
     ##    FA Rates    ##
     ####################################################
 
-FA_rates <- read.csv("C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\Scrambled_Speech_FA_Rates_Exp_1.csv")
+FA_rates <- read.csv("C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\Scrambled_Speech_FA_Rates_exp_1.csv")
 S_col <- array(1:as.numeric(count(FA_rates)))
 
 # Add the new column at the first position
@@ -149,7 +149,7 @@ ggplot(FA_rates, aes(x = x_pos, y = FARate, color = Masker, fill = Masker)) +
     ##    D primes    ##
     ####################################################
 
-d_primes <- read.csv("C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\Scrambled_Speech_D_primes_Exp_1.csv")
+d_primes <- read.csv("C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\Scrambled_Speech_D_primes_exp_1.csv")
 S_col <- array(1:as.numeric(count(d_primes)))
 
 # Add the new column at the first position
@@ -236,3 +236,81 @@ posthoc_talker_unscrambled_exp1 <- lmer(DPrime ~ Talker + (1|S),
 summary(posthoc_talker_unscrambled_exp1)
 
 
+
+####################################################
+##    Masker Rates    ##
+####################################################
+
+masker_rates <- read.csv("C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\Scrambled_Speech_Masker_rates_exp_1.csv")
+S_col <- array(1:as.numeric(count(masker_rates)))
+
+# Add the new column at the first position
+masker_rates <- cbind(col1 = S_col, masker_rates)
+
+colnames(masker_rates) <- c("S","Scrambled_Different","Scrambled_Same","Unscrambled_Different","Unscrambled_Same")
+masker_rates <- pivot_longer(masker_rates, cols=c("Scrambled_Different","Scrambled_Same","Unscrambled_Different","Unscrambled_Same"),
+                         names_to = c("Masker","Talker"), names_sep = "_", values_to = "MaskerRate")
+# Organize Factors
+to.factor <- c('S','Masker','Talker')
+masker_rates[, to.factor] <- lapply(masker_rates[, to.factor], as.factor)
+
+summary_data_MaskerRate <- masker_rates %>%
+  group_by(Masker, Talker) %>%
+  summarise(
+    mean_MaskerRate = mean(MaskerRate),
+    sem_MaskerRate = sd(MaskerRate) / sqrt(n()),
+    .groups = "drop"
+  )
+
+masker_rates <- masker_rates %>%
+  mutate(
+    Talker_num = as.numeric(factor(Talker)),
+    Masker_offset = case_when(
+      Masker == unique(Masker)[1] ~ -0.2,
+      Masker == unique(Masker)[2] ~ 0.2
+    ),
+    x_pos = Talker_num + Masker_offset
+  )
+
+summary_data_MaskerRate <- summary_data_MaskerRate %>%
+  mutate(
+    Talker_num = as.numeric(factor(Talker)),
+    Masker_offset = case_when(
+      Masker == unique(Masker)[1] ~ -0.2,
+      Masker == unique(Masker)[2] ~ 0.2
+    ),
+    x_pos = Talker_num + Masker_offset
+  )
+
+ggplot(masker_rates, aes(x = x_pos, y = MaskerRate, color = Masker, fill = Masker)) +
+  # Subject-wise lines
+  geom_line(aes(group = interaction(S,Masker)), alpha = 0.3) +
+  # Subject-wise points
+  geom_point(aes(group = interaction(S,Masker)), alpha = 0.3) +
+  # Group mean points
+  geom_point(data = summary_data_MaskerRate, 
+             aes(x = x_pos, y = mean_MaskerRate, color = Masker, fill = Masker),
+             size = 3, shape = 21, stroke = 1.5, inherit.aes = FALSE) +
+  # SEM error bars
+  geom_errorbar(data = summary_data_MaskerRate,
+                aes(x = x_pos, ymin = mean_MaskerRate - sem_MaskerRate, ymax = mean_MaskerRate + sem_MaskerRate, color = Masker),
+                size = 1.5,width = 0.2, inherit.aes = FALSE) +
+  scale_x_continuous(breaks = unique(masker_rates$Talker_num),
+                     labels = unique(masker_rates$Talker)) +
+  labs(title = "Masker Color Rate by Masker and Talker Experiment 1", y = "Masker Rate", x = "Talker") +
+  theme_minimal() +
+  ylim(c(0,0.1)) +
+  theme(legend.position = "right")
+
+
+##### Masker Rate statistics ######
+
+model_masker_rate_exp1 <- mixed(MaskerRate ~ Talker + (1|S),data= subset(masker_rates,Masker == "Unscrambled"),control = lmerControl(optimizer = "bobyqa"))
+
+model_masker_rate_exp1
+
+posthoc_talker_exp1 <- lmer(MaskerRate ~ Talker + (1|S),
+                            data= subset(masker_rates, Masker == "Unscrambled"), 
+                            control = lmerControl(optimizer = "bobyqa"))
+
+summary(posthoc_talker_exp1)
