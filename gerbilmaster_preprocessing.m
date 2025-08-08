@@ -5,10 +5,10 @@
 % order = preprocessing, epoch, postprocessing, multsubjects
 %-------------------------------------------------------------------------------------------------------------------
 
-subID = '7082'; % Set current subject ID
+subID = '7023'; % Set current subject ID
 % Excel sheet parameters
-range_A = 'A82'; % Excel sheet 
-range_B = 'B82';
+range_A = 'A2'; % Excel sheet 
+range_B = 'B2';
 badchannels = 'channelsremoved.xlsx';
 % Set directories
 whos_using = 'Bon'; % Choose user for directory stuff
@@ -62,11 +62,6 @@ end
 
 EEG = eeg_checkset( EEG );
 
-%downsampling to 256 Hz
-EEG = pop_resample( EEG, 256);
-[ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 2, 'gui', 'off');
-EEG = eeg_checkset( EEG );
-
 %bandpass filter (order of 1)
 fs = EEG.srate;
 [b, a] = butter(1, [1, 30] / (fs / 2));
@@ -74,6 +69,12 @@ EEG.data = filtfilt(b, a, double(EEG.data'));
 EEG.data = EEG.data';
 EEG = eeg_checkset( EEG );
 [ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 3,'setname',[subID, 'Bandpassed'],'gui','on');
+
+%downsampling to 256 Hz
+EEG = pop_resample( EEG, 256);
+[ALLEEG EEG CURRENTSET] = pop_newset(ALLEEG, EEG, 2, 'gui', 'off');
+EEG = eeg_checkset( EEG );
+
 
 %Marking out very obvious artifacts - pause here and manually do it
 disp('Clean Up Data Before Running ICA!');

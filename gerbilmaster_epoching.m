@@ -1,7 +1,7 @@
 % Primary Authors: Victoria Figarola, Benjamin Richardson 7/21/23
 % Secondary Authors: Emaya Anand, Maanasa Guru Adimurthy
 % EPOCHING
-subID = ['7082']; % set current subject ID
+subID = ['7023']; % set current subject ID
 
 % Set directories
 whos_using = 'Bon';
@@ -27,26 +27,6 @@ EEG = pop_loadset('filename', [subID, '_ICAdone.set'], 'filepath', pre_pro_epoch
 [ALLEEG, EEG, CURRENTSET] = eeg_store(ALLEEG, EEG, 0);
 EEG = eeg_checkset( EEG );
 
-% shift latencies urevent
-% fs = EEG.srate;
-% tube_delay = fs/44100;
-% shifting_latencies = mat2cell( cell2mat({EEG.urevent.latency}') + (tube_delay * fs) , length(EEG.urevent),1);
-% shifting_latencies = shifting_latencies{:};
-% for i = 1:numel(shifting_latencies)
-%     EEG.urevent(i).latency = shifting_latencies(i);
-% end
-% EEG = eeg_checkset( EEG );
-
-% shift latencies event
-% fs = EEG.srate;
-% tube_delay = fs/44100;
-% shifting_latencies = mat2cell( cell2mat({EEG.event.latency}') + (tube_delay * fs) , length(EEG.event),1);
-% shifting_latencies = shifting_latencies{:};
-% for i = 1:numel(shifting_latencies)
-%     EEG.event(i).latency = shifting_latencies(i);
-% end
-% EEG = eeg_checkset( EEG );
-% 
 
 % remove extraneous triggers
 if (7023 <= double(string(subID))) && (double(string(subID)) <= 7071)

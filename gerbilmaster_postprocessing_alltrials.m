@@ -34,7 +34,6 @@ word_length = 0.3;
 num_tot_trials = 144; % look into this
 frontocentral_channels = [31, 5, 26, 8, 32, 23, 9, 22]; % Fz, FC1, FC2, C3, Cz, C4, CP1, and CP2
 fs = 256;
-target_info={};
 subplot_counter = 0;
 %% For each subject.....
 for isubject = 1:size(curr_subject_ID,1)
@@ -80,17 +79,15 @@ for isubject = 1:size(curr_subject_ID,1)
 
     % Define time vector for extracting target ERPs
     eeg_time = this_EEG.times; % in milliseconds
-    audio_time = 0:1/44100:12;
-    %resampled_audio_time = resample(audio_time,this_EEG.srate,44100);
-    resampled_audio_time = -1:1/fs:16;
-    resampled_audio_time = resampled_audio_time.*1000;
+    %resampled_audio_time = -1:1/fs:16;
+    %resampled_audio_time = resampled_audio_time.*1000;
 
     % Define time vector for extracting masker ERPs
     stimulus_length = 12; % seconds
     word_length = 0.3; % seconds
     masker_time = 0:word_length:11.7;
 
-    noise_thresh = 100; % 80;
+    noise_thresh = 80; % 80;
 
     for itrial = 1:size(this_EEG.data,3)% for each trial (should be 144)
         if mod(itrial,12) == 0
@@ -125,10 +122,10 @@ for isubject = 1:size(curr_subject_ID,1)
         this_trial_click_times = table2array(this_subject_table(itrial,9:end));
         this_trial_click_times(isnan(this_trial_click_times)) = [];
         for iclick = 1:length(this_trial_click_times) % for each target word onset...
-            resampled_search_time = floor(this_trial_click_times(iclick)*1000);
+            resampled_search_time = this_trial_click_times(iclick)*1000;
             button_press_delay = 0; % ms
-            [~,start_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_start_time + button_press_delay))); %
-            [~,end_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_end_time)));%
+            [~,start_time] = min(abs(eeg_time - (resampled_search_time + erp_window_start_time + button_press_delay))); %
+            [~,end_time] = min(abs(eeg_time - (resampled_search_time + erp_window_end_time)));%
 
 
             if end_time - start_time == 218
@@ -162,9 +159,9 @@ for isubject = 1:size(curr_subject_ID,1)
         % Within Target Onsets
 
         for ionset = 1:length(this_trial_target_onsets) % for each target word onset...
-            resampled_search_time = floor(this_trial_target_onsets(ionset)*1000);
-            [~,start_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_start_time))); %
-            [~,end_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_end_time)));%
+            resampled_search_time = this_trial_target_onsets(ionset)*1000;
+            [~,start_time] = min(abs(eeg_time - (resampled_search_time + erp_window_start_time))); %
+            [~,end_time] = min(abs(eeg_time - (resampled_search_time + erp_window_end_time)));%
 
             %start_time = resampled_search_time + ((erp_window_start_time/1000)*fs);
             %end_time = resampled_search_time + ((erp_window_end_time/1000)*fs);
@@ -181,11 +178,6 @@ for isubject = 1:size(curr_subject_ID,1)
                 %disp('ERP rejected')
                 continue
             end
-            % Store target information in the cell array
-            target_info{end+1,1} = subID; % Subject ID
-            target_info{end,2} = this_trial_target_onsets(ionset); % Target Onset
-            target_info{end,3} = resampled_audio_time(start_time); % Start Time
-            target_info{end,4} = resampled_audio_time(end_time); % End Time
 
             % Isolate ERP
 
@@ -239,8 +231,8 @@ for isubject = 1:size(curr_subject_ID,1)
         for ionset = 2:length(masker_time)
 
             resampled_search_time = (masker_time(ionset))*1000;
-            [~,start_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_start_time))); %
-            [~,end_time] = min(abs(resampled_audio_time - (resampled_search_time + erp_window_end_time)));%
+            [~,start_time] = min(abs(eeg_time - (resampled_search_time + erp_window_start_time))); %
+            [~,end_time] = min(abs(eeg_time - (resampled_search_time + erp_window_end_time)));%
 
             %resampled_search_index = (masker_time(ionset) + (1*fs) - (0.1*fs));
             %start_time = round(resampled_search_index);
@@ -335,7 +327,6 @@ for isubject = 1:size(curr_subject_ID,1)
 
     % Plot for each subject
     figure;
-    subplot_counter = subplot_counter + 1;
     subplot(1,3,1)
     hold on
     plot(single_onset_time,squeeze(mean(all_scrambled_by_color_onset(isubject,frontocentral_channels,:),2)),'-r');
@@ -346,7 +337,6 @@ for isubject = 1:size(curr_subject_ID,1)
     %legend({'Scrambled','Unscrambled'})
     ylim([-8,8])
 
-    subplot_counter = subplot_counter + 1;
     subplot(1,3,2)
     hold on
     plot(single_onset_time,squeeze(mean(all_scrambled_by_object_onset(isubject,frontocentral_channels,:),2)),'-r');
@@ -357,7 +347,6 @@ for isubject = 1:size(curr_subject_ID,1)
     %legend({'Scrambled','Unscrambled'})
     ylim([-8,8])
 
-    subplot_counter = subplot_counter + 1;
     subplot(1,3,3)
     hold on
     plot(single_onset_time,squeeze(mean(all_scrambled_by_masker_onset(isubject,frontocentral_channels,:),2)),'-r');
