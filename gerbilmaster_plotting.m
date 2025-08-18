@@ -3,7 +3,7 @@
 % Author: Benjamin Richardson
 % 09/16/2024
 
-for experiment = 1:2
+for experiment = 1
     if experiment == 1
         curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081'); % NOT Amplitude modulated
     elseif experiment == 2
@@ -41,7 +41,6 @@ for experiment = 1:2
 
     num_erps_removed = zeros(size(curr_subject_ID,1));
 
-    noise_thresh = 100;
 
     %EEG_struct_for_topographies = load('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\prepro_epoched_data\7064all_epoch.mat');
     %EEG_struct_for_topographies = EEG_struct_for_topographies.EEG;
@@ -55,7 +54,7 @@ for experiment = 1:2
         load(append('C:\Users\benri\Downloads\Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'))
 
         % Plotting parameters
-        erp_window_start_time =-100;
+        erp_window_start_time =-50;
         erp_window_end_time = 750;
         button_press_delay = 0;
         single_onset_time = linspace(erp_window_start_time,erp_window_end_time,size(data_by_target_onset_baselined,2));
@@ -120,39 +119,40 @@ for experiment = 1:2
         all_target_object_responded(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,object_words)'.*ismember(ERP_info_target(:).Responded,[1])')),3));
         all_target_object_not_responded(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,object_words)'.*ismember(ERP_info_target(:).Responded,[0])')),3));
 
+        
 
-        % Plot averages for each subject
-        %     figure;
-        %     subplot(1,3,1)
-        %     hold on
-        %     plot(single_onset_time,squeeze(mean(all_scrambled_by_color_onset(isubject,frontocentral_channels,:),2)),'-r');
-        %     plot(single_onset_time,squeeze(mean(all_unscrambled_by_color_onset(isubject,frontocentral_channels,:),2)),'-b');
-        %     if isubject == 1
-        %         title('Target Color Word')
-        %     end
-        %     %legend({'Scrambled','Unscrambled'})
-        %     ylim([-8,8])
-        %
-        %     subplot(1,3,2)
-        %     hold on
-        %     plot(single_onset_time,squeeze(mean(all_scrambled_by_object_onset(isubject,frontocentral_channels,:),2)),'-r');
-        %     plot(single_onset_time,squeeze(mean(all_unscrambled_by_object_onset(isubject,frontocentral_channels,:),2)),'-b');
-        %     if isubject == 1
-        %         title('Target Object Word')
-        %     end
-        %     %legend({'Scrambled','Unscrambled'})
-        %     ylim([-8,8])
-        %
-        %     subplot(1,3,3)
-        %     hold on
-        %     plot(single_onset_time,squeeze(mean(all_scrambled_by_masker_onset(isubject,frontocentral_channels,:),2)),'-r');
-        %     plot(single_onset_time,squeeze(mean(all_unscrambled_by_masker_onset(isubject,frontocentral_channels,:),2)),'-b');
-        %     if isubject == 1
-        %         title('Masker Word')
-        %     end
-        %     %legend({'Scrambled','Unscrambled'})
-        %     ylim([-8,8])
-        %     sgtitle(subID)
+%         % Plot averages for each subject
+%         figure;
+%         subplot(1,3,1)
+%         hold on
+%         plot(single_onset_time,squeeze(mean(all_scrambled_by_color_onset_dt(isubject,frontocentral_channels,:),2)),'-r');
+%         plot(single_onset_time,squeeze(mean(all_unscrambled_by_color_onset_dt(isubject,frontocentral_channels,:),2)),'-b');
+%         if isubject == 1
+%             title('Target Color Word')
+%         end
+%         %legend({'Scrambled','Unscrambled'})
+%         ylim([-8,8])
+% 
+%         subplot(1,3,2)
+%         hold on
+%         plot(single_onset_time,squeeze(mean(all_scrambled_by_object_onset_dt(isubject,frontocentral_channels,:),2)),'-r');
+%         plot(single_onset_time,squeeze(mean(all_unscrambled_by_object_onset_dt(isubject,frontocentral_channels,:),2)),'-b');
+%         if isubject == 1
+%             title('Target Object Word')
+%         end
+%         %legend({'Scrambled','Unscrambled'})
+%         ylim([-8,8])
+% 
+%         subplot(1,3,3)
+%         hold on
+%         plot(single_onset_time,squeeze(mean(all_scrambled_by_masker_onset_dt(isubject,frontocentral_channels,:),2)),'-r');
+%         plot(single_onset_time,squeeze(mean(all_unscrambled_by_masker_onset_dt(isubject,frontocentral_channels,:),2)),'-b');
+%         if isubject == 1
+%             title('Masker Word')
+%         end
+%         %legend({'Scrambled','Unscrambled'})
+%         ylim([-8,8])
+%         sgtitle(subID)
 
         % Plot individual button press topographies
         % figure;

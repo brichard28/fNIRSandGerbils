@@ -401,13 +401,13 @@ for isubject = 1:size(curr_subject_ID,1)
 
     num_target_color_responded(isubject,:) = sum(logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[1])'));
     num_target_color_not_responded(isubject,:) = sum(logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[0])'));
-    num_target_object_responded(isubject,:) = sum(logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[1])'));
-    num_target_object_not_responded(isubject,:) = sum(logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[0])'));
+    num_target_color_responded(isubject,:) = sum(logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[1])'));
+    num_target_color_not_responded(isubject,:) = sum(logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[0])'));
 
 
     %% SAVE INFO FOR THIS SUBBY
     save(append('C:\Users\benri\Downloads\Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'),'data_by_masker_onset_baselined','data_by_target_onset_baselined','data_by_button_press_baselined','data_by_button_press_near_baselined','data_by_button_press_far_baselined','ERP_info_button_press','ERP_info_masker','ERP_info_target','-v7.3')
-    save('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\ERP_totals.mat','num_target_color_responded','num_target_color_not_responded','num_target_color_responded','num_target_color_not_responded','num_target_object_responded','num_target_object_not_responded')
+    save('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\ERP_totals.mat','num_target_color_responded','num_target_color_not_responded','num_target_color_responded','num_target_color_not_responded','num_target_obj')
 end
 
 end
