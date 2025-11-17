@@ -7,13 +7,13 @@ library(ggplot2)
 library(rstatix)
 library(afex)
 library(dplyr)
-library(rhdf5)
+#library(rhdf5)
 # Read the .mat file
 library(R.matlab)
-p1_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p1_target_exp2.csv')
-n1_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_n1_target_exp2.csv')
-p2_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p2_target_exp2.csv')
-p3_data <- read.csv('C:\\Users\\benri\\Documents\\GitHub\\fNIRSandGerbils\\data\\all_subs_p3_target_exp2.csv')
+p1_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p1_target_exp2.csv')
+n1_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_n1_target_exp2.csv')
+p2_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p2_target_exp2.csv')
+p3_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p3_target_exp2.csv')
 
 names(p1_data)[names(p1_data) == "Amplitude"] <- "p1"
 names(n1_data)[names(n1_data) == "Amplitude"] <- "n1"
@@ -34,10 +34,10 @@ parietooccipital_electrodes <- c("P3", "Pz", "PO3", "O1", "Oz", "O2", "PO4", "P4
 # Define ERP variables to pivot
 erp_vars <- c("p1", "n1", "p2", "p3")
 
-# For frontocentral electrodes: calculate mean(n1 - p1) per subject and group
+# For frontocentral electrodes: calculate mean(p1 - n1) per subject and group
 frontocentral_summary <- all_data %>%
   filter(Electrode %in% frontocentral_electrodes) %>%
-  mutate(diff_n1_p1 = n1 - p1) %>%
+  mutate(diff_n1_p1 = p1 - n1) %>%
   group_by(S, Masker, Talker, WordType) %>%
   summarise(mean_diff = mean(diff_n1_p1, na.rm = TRUE)) %>%
   ungroup()
@@ -70,7 +70,7 @@ ggplot(frontocentral_summary,
         panel.border = element_rect(colour = "black", fill=NA),
         axis.ticks.x = element_line(size = 0.5),
         axis.ticks.y = element_blank()) +
-  labs(title = "N1 - P1 by Condition Experiment 2", 
+  labs(title = "p1 - n1 by Condition Experiment 2", 
        x = "", y = "Amplitude (mV)") +
   ylim(c(-10,10))
 
