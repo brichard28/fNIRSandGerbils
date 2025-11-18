@@ -41,8 +41,8 @@ load_behavior_measure <- function(filepath, measure_name) {
   df <- cbind(S = S_col, df)
   
   colnames(df) <- c("S",
-                    "Scrambled_Same","Scrambled_Different",
-                    "Unscrambled_Same","Unscrambled_Different")
+                    "Scrambled_Different","Scrambled_Same",
+                    "Unscrambled_Different","Unscrambled_Same")
   
   df <- pivot_longer(df,
                      cols = -S,
@@ -260,3 +260,49 @@ ggsave(
   height = 8,
   device = "svg"
 )
+
+
+##### Hit Rates ####
+# Experiment 1
+model_hitrate_exp1 <- lmer(Value ~ Masker*Talker + (1|S), data = subset(long_data, Measure == "Hit Rate" & Experiment == "Exp. 1"), control = lmerControl(optimizer = "bobyqa"))
+anova(model_hitrate_exp1)
+# Significant interaction between Masker and Talker
+em_hitrate_exp1 <- emmeans(model_hitrate_exp1, ~ Masker*Talker)
+pairs(em_hitrate_exp1, by = "Masker", adjust = "bonferroni")
+
+
+# Experiment 2
+model_hitrate_exp2 <- lmer(Value ~ Masker*Talker + (1|S), data = subset(long_data, Measure == "Hit Rate" & Experiment == "Exp. 2"), control = lmerControl(optimizer = "bobyqa"))
+anova(model_hitrate_exp2)
+# Significant interaction between Masker and Talker
+em_hitrate_exp2 <- emmeans(model_hitrate_exp2, ~Masker*Talker)
+pairs(em_hitrate_exp2, by = "Masker", adjust = "bonferroni")
+
+#### Within-stream False alarm rate ####
+# Experiment 1
+model_wsFArate_exp1 <- lmer(Value ~ Masker*Talker + (1|S), data = subset(long_data, Measure == "Within-stream\nFA Rate" & Experiment == "Exp. 1"), control = lmerControl(optimizer = "bobyqa"))
+anova(model_wsFArate_exp1)
+# Significant main effect of Masker
+em_wsFArate_exp1 <- emmeans(model_wsFArate_exp1, ~ Masker)
+pairs(em_wsFArate_exp1, adjust = "bonferroni")
+
+# Experiment 2
+model_wsFArate_exp2 <- mixed(Value ~ Masker*Talker + (1|S), data = subset(long_data, Measure == "Within-stream\nFA Rate" & Experiment == "Exp. 2"), control = lmerControl(optimizer = "bobyqa"))
+anova(model_wsFArate_exp2)
+# Significant interaction between Masker and Talker
+em_wsFArate_exp2 <- emmeans(model_wsFArate_exp2, ~ Masker * Talker)
+pairs(em_wsFArate_exp2, by = "Talker", adjust = "bonferroni")
+
+#### Between-stream False alarm rate ####
+# Experiment 1
+model_bsFArate_exp1 <- mixed(Value ~ Talker + (1|S), data = subset(long_data, Measure == "Between-stream\nFA Rate" & Experiment == "Exp. 1"), control = lmerControl(optimizer = "bobyqa"))
+anova(model_bsFArate_exp1)
+# Significant effect of Talker
+em_bsFArate_exp1 <- emmeans(model_bsFArate_exp1, ~ Talker)
+pairs(em_bsFArate_exp1, adjust = "bonferroni")
+
+model_bsFArate_exp2 <- mixed(Value ~ Talker + (1|S), data = subset(long_data, Measure == "Between-stream\nFA Rate" & Experiment == "Exp. 2"), control = lmerControl(optimizer = "bobyqa"))
+anova(model_bsFArate_exp2)
+# Significant effect of Talker
+em_bsFArate_exp2 <- emmeans(model_bsFArate_exp2, ~ Talker)
+pairs(em_bsFArate_exp2, adjust = "bonferroni")

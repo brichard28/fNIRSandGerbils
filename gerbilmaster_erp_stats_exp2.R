@@ -102,11 +102,24 @@ ggplot(parietooccipital_summary,
   ylim(c(-10,10))
 
 
-model_p1n1_exp2 <- mixed(mean_diff ~ Masker*Talker*WordType + (1|S),data= frontocentral_summary,control = lmerControl(optimizer = "bobyqa"))
+model_p1n1_exp2 <- lmer(mean_diff ~ Masker*Talker*WordType + (1|S),data= frontocentral_summary,control = lmerControl(optimizer = "bobyqa"))
 
-model_p1n1_exp2
+anova(model_p1n1_exp2)
 
-model_p3_exp2 <- mixed(mean_p3 ~ Masker*Talker*WordType + (1|S),data= parietooccipital_summary,control = lmerControl(optimizer = "bobyqa"))
+# Significant main effect of word type
+em_p1n1_wordtype <- emmeans(model_p1n1_exp2, ~ WordType)
+pairs(em_p1n1_wordtype, adjust = "bonferroni")
 
-model_p3_exp2
+# Significant interaction between masker and talker
+em_p1n1_masker_talker <- emmeans(model_p1n1_exp2, ~ Masker * Talker)
+pairs(em_p1n1_masker_talker, by = "Talker", adjust = "bonferroni")
 
+
+
+model_p3_exp2 <- lmer(mean_p3 ~ Masker*Talker*WordType + (1|S),data= parietooccipital_summary,control = lmerControl(optimizer = "bobyqa"))
+
+anova(model_p3_exp2)
+
+# Significant main effect of word type
+em_p3_wordtype <- emmeans(model_p3_exp2, ~ WordType)
+pairs(em_p3_wordtype, adjust = "bonferroni")

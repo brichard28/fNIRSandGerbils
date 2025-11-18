@@ -101,20 +101,30 @@ ggplot(parietooccipital_summary,
   ylim(c(-10,10))
 
 
-model_p1n1_exp1 <- mixed(mean_diff ~ Masker*Talker*WordType + (1|S),data= frontocentral_summary,control = lmerControl(optimizer = "bobyqa"))
+model_p1n1_exp1 <- lmer(mean_diff ~ Masker*Talker*WordType + (1|S),data= frontocentral_summary,control = lmerControl(optimizer = "bobyqa"))
 
-model_p1n1_exp1
+anova(model_p1n1_exp1)
+
+# Main effect of WordType
+em_p1n1_wordtype <- emmeans(model_p1n1_exp1, ~ WordType)
+pairs(em_p1n1_wordtype, adjust = "bonferroni")
+
+# Significant interaction between masker and talker 
+# Compare across masker at each level of talker
+em_p1n1_masker_talker <- emmeans(model_p1n1_exp1, ~ Masker * Talker)
+pairs(em_p1n1_masker_talker, by = "Talker", adjust = "bonferroni")
 
 
-frontocentral_summary$Talker <- relevel(frontocentral_summary$Talker, "Different")
-posthoc_talker_scrambled_exp1 <- lmer(mean_diff ~ Talker + (1|S),
-                                      data= subset(frontocentral_summary, Masker == "Unscrambled"), 
-                                      control = lmerControl(optimizer = "bobyqa"))
 
-summary(posthoc_talker_scrambled_exp1)
+model_p3_exp1 <- lmer(mean_p3 ~ Masker*Talker*WordType + (1|S),data= parietooccipital_summary,control = lmerControl(optimizer = "bobyqa"))
 
+anova(model_p3_exp1)
 
-model_p3_exp1 <- mixed(mean_p3 ~ Masker*Talker*WordType + (1|S),data= parietooccipital_summary,control = lmerControl(optimizer = "bobyqa"))
+# Significant main effect of WordType
+em_p3_wordtype <- emmeans(model_p3_exp1, ~ WordType)
+pairs(em_p3_wordtype, adjust = "bonferroni")
 
-model_p3_exp1
-
+# Significant interaction between Masker and Talker
+# Test the effect of masker at each talker
+em_p3_masker_talker <- emmeans(model_p3_exp1, ~ Masker * Talker)
+pairs(em_p3_masker_talker, by = "Talker", adjust = "bonferroni")

@@ -119,32 +119,20 @@ make_plot_2x2 <- function(df, yvar, row_label) {
     )
   
   # 3. Compute line color for each subject based on which condition is higher
-  line_colors <- df %>%
-    group_by(Experiment, S, Talker, WordType, RowLabel) %>%
-    summarise(
-      Scrambled_val = mean(.data[[yvar]][Masker=="Scrambled"], na.rm=TRUE),
-      Words_val     = mean(.data[[yvar]][Masker=="Unscrambled"], na.rm=TRUE),
-      .groups="drop"
-    ) %>%
-    mutate(
-      line_color = ifelse(Scrambled_val > Words_val, scrambled_color, words_color),
-    ) %>%
-    select(Experiment, S, Talker, WordType, RowLabel, line_color)
-  
-  # Join line colors back to the main df
   df <- df %>%
-    left_join(line_colors, by = c("Experiment", "S", "Talker", "WordType"))
-  
+    group_by(Experiment, S, Talker, WordType, RowLabel) %>%
+    mutate(masker_diff = .data[[yvar]][Masker == "Scrambled"] -
+             .data[[yvar]][Masker == "Unscrambled"]) %>%
+    mutate(line_color = ifelse(masker_diff > 0, rgb(248/255, 118/255, 109/255) , rgb(97/255, 156/255, 255/255) ))
+
   # 4. Plot
   ggplot() +
     geom_hline(yintercept=0) +
     
     # Subject lines colored by which condition is higher
     geom_line(data = df,
-              aes(x = x_pos, y = .data[[yvar]],
-                  group = interaction(S, Talker, WordType)),
-              color = I(df$line_color),
-              alpha = 1.0) +
+              aes(x = x_pos, y = .data[[yvar]], color = I(line_color),
+                  group = interaction(S, Talker, WordType))) +
     
     # Subject points
     geom_point(data = df,
@@ -178,9 +166,8 @@ make_plot_2x2 <- function(df, yvar, row_label) {
     scale_color_manual(values = color_map) + 
 
     # Facets
-    facet_grid(rows = vars(Experiment),
-               cols = vars(WordType),
-               switch = "y") +
+    facet_wrap(~ Experiment + WordType, nrow = 1) + 
+  
     
     scale_x_continuous(breaks = c(1, 2),
                        labels = levels(df$Talker),
@@ -189,11 +176,14 @@ make_plot_2x2 <- function(df, yvar, row_label) {
     labs(x = "Talker", y = "Amplitude (mV)") +
     
     theme_bw() +
-    theme(strip.background = element_rect(fill="white"),
-          strip.text.x = element_text(size=12),
-          strip.text.y = element_text(size=13),
+    theme(strip.background = element_blank(),
+          strip.text.x = element_blank(),
+          strip.text.y = element_blank(),
           axis.text.x = element_text(size=11),
-          axis.title.y = element_text(size=12))
+          axis.title.y = element_text(size=12),
+          panel.background = element_rect(fill = "transparent", color = NA),
+          plot.background  = element_rect(fill = "transparent", color = NA),
+          legend.position = "none")   # removes all legends
 }
 
 
@@ -211,5 +201,5 @@ figure2 <- make_plot_2x2(p3_summary, "mean_p3", "P3")
 figure1
 figure2
 
-ggsave("/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/p1n1_results.svg", figure1,device="svg")
-ggsave("/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/p3_results.svg", figure2, device="svg")
+ggsave("/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/p1n1_results.svg", figure1,device="svg", width = 18, height = 4.5, units = "in", bg = "transparent")
+ggsave("/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/p3_results.svg", figure2, device="svg", width = 18, height = 4.5, units = "in", bg = "transparent")
