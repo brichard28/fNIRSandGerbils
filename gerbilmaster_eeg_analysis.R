@@ -201,5 +201,5 @@ figure2 <- make_plot_2x2(p3_summary, "mean_p3", "P3")
 figure1
 figure2
 
-ggsave("/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/p1n1_results.svg", figure1,device="svg", width = 18, height = 4.5, units = "in", bg = "transparent")
-ggsave("/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/p3_results.svg", figure2, device="svg", width = 18, height = 4.5, units = "in", bg = "transparent")
+ggsave("/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/p1n1_results.svg", figure1,device="svg", width = 15, height = 6, units = "in", bg = "transparent")
+ggsave("/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/p3_results.svg", figure2, device="svg", width = 15, height = 6, units = "in", bg = "transparent")
