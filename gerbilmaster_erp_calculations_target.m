@@ -26,7 +26,7 @@ for experiment = 1:2
     all_unscrambled_by_color_onset_dt = [];
     all_unscrambled_by_object_onset_dt = [];
 
-    erp_window_start_time = -100; % 100 ms before onset of word
+    erp_window_start_time = -50; % 100 ms before onset of word
     erp_window_end_time = 750; % 750 ms after onset of word
     fs = 256;
     peak_integration_time = 0.020; % s
@@ -46,7 +46,7 @@ for experiment = 1:2
         subID = string(curr_subject_ID(isubject,:));
         disp(subID)
         % Load Data
-        load(append('C:\Users\benri\Downloads\Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'))
+        load(append('/Users/benrichardson/Downloads/EEG Results/Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'))
 
 
         single_onset_time = linspace(erp_window_start_time,erp_window_end_time,size(data_by_target_onset_baselined,2));
@@ -123,17 +123,17 @@ for experiment = 1:2
 
         % Split up erps by condition, take the mean
         for ichannel = 1:32
-            all_scrambled_by_color_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[1])'.*ismember(ERP_info_target(:).Condition,[2]))),3));
-            all_scrambled_by_object_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[0])'.*ismember(ERP_info_target(:).Condition,[2]))),3));
+            all_scrambled_by_color_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[2]))),3)); % .*ismember(ERP_info_target(:).Responded,[1])'
+            all_scrambled_by_object_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[2]))),3)); %.*ismember(ERP_info_target(:).Responded,[0])'
 
-            all_unscrambled_by_color_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[1])'.*ismember(ERP_info_target(:).Condition,[4]))),3));
-            all_unscrambled_by_object_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[0])'.*ismember(ERP_info_target(:).Condition,[4]))),3));
+            all_unscrambled_by_color_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[4]))),3)); % .*ismember(ERP_info_target(:).Responded,[1])'
+            all_unscrambled_by_object_onset_st(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[4]))),3)); % .*ismember(ERP_info_target(:).Responded,[0])'
 
-            all_scrambled_by_color_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[1])'.*ismember(ERP_info_target(:).Condition,[1]))),3));
-            all_scrambled_by_object_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[0])'.*ismember(ERP_info_target(:).Condition,[1]))),3));
+            all_scrambled_by_color_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1]))),3)); % .*ismember(ERP_info_target(:).Responded,[1])'
+            all_scrambled_by_object_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[1]))),3)); % .*ismember(ERP_info_target(:).Responded,[0])'
 
-            all_unscrambled_by_color_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[1])'.*ismember(ERP_info_target(:).Condition,[3]))),3));
-            all_unscrambled_by_object_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Responded,[0])'.*ismember(ERP_info_target(:).Condition,[3]))),3));
+            all_unscrambled_by_color_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[3]))),3)); % .*ismember(ERP_info_target(:).Responded,[1])'
+            all_unscrambled_by_object_onset_dt(isubject,:,:) = squeeze(mean(data_by_target_onset_baselined(:,:,logical(~ismember(ERP_info_target(:).Word,color_words)'.*ismember(ERP_info_target(:).Condition,[3]))),3)); % .*ismember(ERP_info_target(:).Responded,[0])'
  
 
 
@@ -205,8 +205,8 @@ for experiment = 1:2
 
     end
 
-    writetable(struct2table(all_subs_p1),append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p1_target_exp',num2str(experiment),'.csv'))
-    writetable(struct2table(all_subs_n1),append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_n1_target_exp',num2str(experiment),'.csv'))
-    writetable(struct2table(all_subs_p2),append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p2_target_exp',num2str(experiment),'.csv'))
-    writetable(struct2table(all_subs_p3),append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p3_target_exp',num2str(experiment),'.csv'))
+    writetable(struct2table(all_subs_p1),append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p1_target_exp',num2str(experiment),'_incl_resp.csv'))
+    writetable(struct2table(all_subs_n1),append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_n1_target_exp',num2str(experiment),'_incl_resp.csv'))
+    writetable(struct2table(all_subs_p2),append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p2_target_exp',num2str(experiment),'_incl_resp.csv'))
+    writetable(struct2table(all_subs_p3),append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p3_target_exp',num2str(experiment),'_incl_resp.csv'))
 end

@@ -12,8 +12,8 @@
 
 %%OK HERE'S ACTUAL CODE
 %%path
-addpath('D:\Experiments\fNIRSandGerbils\unprocessed\bob_all_long');
-addpath('D:\Experiments\fNIRSandGerbils\AuditoryToolbox');
+addpath('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/unprocessed/bob_all_long');
+addpath('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/AuditoryToolbox');
 %comment nonsense
 
 %%make a master stream/control stream and variables

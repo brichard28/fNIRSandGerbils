@@ -33,13 +33,13 @@
 
 %%OK HERE'S ACTUAL CODEyyllllllll
 %%path
-addpath('D:\Experiments\fNIRSandGerbils\unprocessed\bob_all')
-addpath('D:\Experiments\fNIRSandGerbils\unprocessed\bob_all_long')
-addpath('D:\Experiments\fNIRSandGerbils\unprocessed\mike_all')
-addpath('D:\Experiments\fNIRSandGerbils\stim\')
-addpath('D:\Experiments\fNIRSandGerbils\AuditoryToolbox')
+addpath('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/unprocessed/bob_all')
+addpath('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/unprocessed/bob_all_long')
+addpath('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/unprocessed/mike_all')
+addpath('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/stim/')
+addpath('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/AuditoryToolbox')
 
-addpath('D:\Experiments\fNIRSandGerbils\AuditoryToolbox');
+addpath('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/AuditoryToolbox');
 %comment nonsense
 
 %%make a master stream/control stream and variables
@@ -178,9 +178,9 @@ while practicetrial <= numpracticetrials
     soundArray = strings(1, numtotalwords);
     while loadsoundindex <= numtotalwords
         if bob_or_mike_index == 0
-            word_filename = append('unprocessed\bob_all\',final_word_order(loadsoundindex), '_short.wav');
+            word_filename = append('unprocessed/bob_all/',final_word_order(loadsoundindex), '_short.wav');
         elseif bob_or_mike_index == 1
-            word_filename = append('unprocessed\mike_all\',final_word_order(loadsoundindex), '_short.wav');
+            word_filename = append('unprocessed/mike_all/',final_word_order(loadsoundindex), '_short.wav');
         end
         soundArray(loadsoundindex) = word_filename;
         loadsoundindex = loadsoundindex + 1;
@@ -294,13 +294,13 @@ while practicetrial <= numpracticetrials
 
     for i = 1:length(target_onsets)
         if bob_or_mike_index == 0 && talkerindex == 0 % bob background, same talker
-            word_filename = append('unprocessed\bob_all\',target_word_order(i), '_short.wav');
+            word_filename = append('unprocessed/bob_all/',target_word_order(i), '_short.wav');
         elseif bob_or_mike_index == 0 && talkerindex == 1 % bob background, diff talker
-            word_filename = append('unprocessed\mike_all\',target_word_order(i), '_short.wav');
+            word_filename = append('unprocessed/mike_all/',target_word_order(i), '_short.wav');
         elseif bob_or_mike_index == 1 && talkerindex == 0 % mike background, same talker
-            word_filename = append('unprocessed\mike_all\',target_word_order(i), '_short.wav');
+            word_filename = append('unprocessed/mike_all/',target_word_order(i), '_short.wav');
         elseif bob_or_mike_index == 1 && talkerindex == 1 % mike background, diff talker            
-            word_filename = append('unprocessed\bob_all\',target_word_order(i), '_short.wav');
+            word_filename = append('unprocessed/bob_all/',target_word_order(i), '_short.wav');
         end
         [y,fs] = audioread(word_filename);
         filtered_word = zeros(length(y),1);
@@ -414,9 +414,9 @@ while trial <= numtrials
     soundArray = strings(1, numtotalwords);
     while loadsoundindex <= numtotalwords
         if bob_or_mike_index == 0
-            word_filename = append('unprocessed\bob_all\',final_word_order(loadsoundindex), '_short.wav');
+            word_filename = append('unprocessed/bob_all/',final_word_order(loadsoundindex), '_short.wav');
         elseif bob_or_mike_index == 1
-            word_filename = append('unprocessed\mike_all\',final_word_order(loadsoundindex), '_short.wav');
+            word_filename = append('unprocessed/mike_all/',final_word_order(loadsoundindex), '_short.wav');
         end
         soundArray(loadsoundindex) = word_filename;
         loadsoundindex = loadsoundindex + 1;
@@ -530,13 +530,13 @@ while trial <= numtrials
 
     for i = 1:length(target_onsets)
         if bob_or_mike_index == 0 && talkerindex == 0 % bob background, same talker
-            word_filename = append('unprocessed\bob_all\',target_word_order(i), '_short.wav');
+            word_filename = append('unprocessed/bob_all/',target_word_order(i), '_short.wav');
         elseif bob_or_mike_index == 0 && talkerindex == 1 % bob background, diff talker
-            word_filename = append('unprocessed\mike_all\',target_word_order(i), '_short.wav');
+            word_filename = append('unprocessed/mike_all/',target_word_order(i), '_short.wav');
         elseif bob_or_mike_index == 1 && talkerindex == 0 % mike background, same talker
-            word_filename = append('unprocessed\mike_all\',target_word_order(i), '_short.wav');
+            word_filename = append('unprocessed/mike_all/',target_word_order(i), '_short.wav');
         elseif bob_or_mike_index == 1 && talkerindex == 1 % mike background, diff talker            
-            word_filename = append('unprocessed\bob_all\',target_word_order(i), '_short.wav');
+            word_filename = append('unprocessed/bob_all/',target_word_order(i), '_short.wav');
         end
         [y,fs] = audioread(word_filename);
         filtered_word = zeros(length(y),1);

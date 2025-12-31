@@ -18,8 +18,8 @@ library(ggforce)
 talker_map <- c("Same" = 1, "Different" = 2)
 
 masker_offset_map <- c(
-  "Scrambled" = -0.2,
-  "Words"     =  0.2
+  "Scrambled" = -0.1,
+  "Words"     =  0.1
 )
 
 # Define colors using RGB (0–1 scale)
@@ -188,21 +188,21 @@ p <- ggplot(long_data, aes(x = x_pos, y = Value, color = Masker, fill = Masker))
   # Individual subject points
   geom_point(aes(group = interaction(S, Masker)), alpha = 0.3) +
   
-  # GRAND-MEAN LINE — black + dashed
-  geom_line(
-    data = summary_data,
-    aes(x = x_pos, y = mean_value, group = Masker),
-    color = "black",
-    size = 1.2,
-    linetype = "dashed",
-    inherit.aes = FALSE
-  ) +
-  
+  # # GRAND-MEAN LINE — black + dashed
+  # geom_line(
+  #   data = summary_data,
+  #   aes(x = x_pos, y = mean_value, group = Masker),
+  #   color = "black",
+  #   size = 1.2,
+  #   linetype = "dashed",
+  #   inherit.aes = FALSE
+  # ) +
+  # 
   # GRAND-MEAN POINTS — black outline, white fill
   geom_point(
     data = summary_data,
     aes(x = x_pos, y = mean_value, shape = Masker, color = Masker, fill = Masker),
-    size = 3.2,
+    size = 5.0,
     stroke = 1.2,
     inherit.aes = FALSE
   ) +
@@ -216,7 +216,7 @@ p <- ggplot(long_data, aes(x = x_pos, y = Value, color = Masker, fill = Masker))
       ymax = mean_value + sem_value, 
       color = Masker
     ),
-    width = 0.2,
+    width = 0.3,
     size = 1.1,
     inherit.aes = FALSE
   ) +
@@ -276,7 +276,7 @@ model_hitrate_exp2 <- lmer(Value ~ Masker*Talker + (1|S), data = subset(long_dat
 anova(model_hitrate_exp2)
 # Significant interaction between Masker and Talker
 em_hitrate_exp2 <- emmeans(model_hitrate_exp2, ~Masker*Talker)
-pairs(em_hitrate_exp2, by = "Masker", adjust = "bonferroni")
+pairs(em_hitrate_exp2, by = "Talker", adjust = "bonferroni")
 
 #### Within-stream False alarm rate ####
 # Experiment 1
@@ -291,7 +291,7 @@ model_wsFArate_exp2 <- mixed(Value ~ Masker*Talker + (1|S), data = subset(long_d
 anova(model_wsFArate_exp2)
 # Significant interaction between Masker and Talker
 em_wsFArate_exp2 <- emmeans(model_wsFArate_exp2, ~ Masker * Talker)
-pairs(em_wsFArate_exp2, by = "Talker", adjust = "bonferroni")
+pairs(em_wsFArate_exp2, by = "Masker", adjust = "bonferroni")
 
 #### Between-stream False alarm rate ####
 # Experiment 1

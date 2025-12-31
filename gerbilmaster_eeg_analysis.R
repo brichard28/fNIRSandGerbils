@@ -16,10 +16,10 @@ library(R.matlab)
 
 load_exp <- function(exp_num){
   
-  p1 <- read.csv(paste0('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p1_target_exp', exp_num, '.csv'))
-  n1 <- read.csv(paste0('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_n1_target_exp', exp_num, '.csv'))
-  p2 <- read.csv(paste0('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p2_target_exp', exp_num, '.csv'))
-  p3 <- read.csv(paste0('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p3_target_exp', exp_num, '.csv'))
+  p1 <- read.csv(paste0('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p1_target_exp', exp_num, '_incl_resp.csv'))
+  n1 <- read.csv(paste0('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_n1_target_exp', exp_num, '_incl_resp.csv'))
+  p2 <- read.csv(paste0('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p2_target_exp', exp_num, '_incl_resp.csv'))
+  p3 <- read.csv(paste0('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p3_target_exp', exp_num, '_incl_resp.csv'))
   
   names(p1)[names(p1)=="Amplitude"] <- "p1"
   names(n1)[names(n1)=="Amplitude"] <- "n1"
@@ -93,7 +93,7 @@ p3_summary$Talker <- factor(p3_summary$Talker, levels=c("Same","Different"))
 # Rows = Experiment, Columns = WordType
 ############################################################
 
-offset_map <- c("Scrambled" = -0.25, "Unscrambled" = 0.25)
+offset_map <- c("Scrambled" = -0.07, "Unscrambled" = 0.07)
 talker_map <- c("Same" = 1, "Different" = 2)
 
 make_plot_2x2 <- function(df, yvar, row_label) {
@@ -138,26 +138,26 @@ make_plot_2x2 <- function(df, yvar, row_label) {
     geom_point(data = df,
                aes(x = x_pos, y = .data[[yvar]],
                     shape = Masker), color = "gray",
-               size = 2.3, stroke = 0.7) +
+               size = 2.5, stroke = 0.7) +
     
     # Summary error bars (black)
     geom_errorbar(data = sum_df,
                   aes(x = x_pos,
                       ymin = mean_val - se_val,
-                      ymax = mean_val + se_val),
-                  color="black",
-                  width = 0.2, linewidth = 0.7) +
+                      ymax = mean_val + se_val,
+                      color = Masker),
+                  width = 0.3, linewidth = 1.1) +
     
     # Summary line (black dashed connecting same/different)
-    geom_line(data = sum_df,
-              aes(x = x_pos, y = mean_val, group = Talker),
-              color = "black", linetype = "dashed", size = 1.2) +
-    
+    # geom_line(data = sum_df,
+    #           aes(x = x_pos, y = mean_val, group = Talker),
+    #           color = "black", linetype = "dashed", size = 1.2) +
+    # 
     
     # Summary points (black outline)
     geom_point(data = sum_df,
                aes(x = x_pos, y = mean_val, color = Masker, shape = Masker),
-               fill = "white", size = 4, stroke = 1.2) +
+               fill = "white", size = 5, stroke = 1.2) +
     
     
     

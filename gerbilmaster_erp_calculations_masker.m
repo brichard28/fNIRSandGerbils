@@ -54,7 +54,7 @@ for isubject = 1:size(curr_subject_ID,1)
     subID = string(curr_subject_ID(isubject,:));
     disp(subID)
     % Load Data
-    load(append('C:\Users\benri\Downloads\Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'))
+    load(append('/Users/benrichardson/Downloads/EEG Results/Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'))
 
 
     single_onset_time = linspace(erp_window_start_time,erp_window_end_time,size(data_by_masker_onset_baselined,2));
@@ -213,7 +213,7 @@ for isubject = 1:size(curr_subject_ID,1)
 
 end
 
-writetable(struct2table(all_subs_p1),append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p1_masker_exp',num2str(experiment),'.csv'))
-writetable(struct2table(all_subs_n1),append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_n1_masker_exp',num2str(experiment),'.csv'))
-writetable(struct2table(all_subs_p2),append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p2_masker_exp',num2str(experiment),'.csv'))
-writetable(struct2table(all_subs_p3),append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\all_subs_p3_masker_exp',num2str(experiment),'.csv'))
+writetable(struct2table(all_subs_p1),append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p1_masker_exp',num2str(experiment),'_incl_resp.csv'))
+writetable(struct2table(all_subs_n1),append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_n1_masker_exp',num2str(experiment),'_incl_resp.csv'))
+writetable(struct2table(all_subs_p2),append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p2_masker_exp',num2str(experiment),'_incl_resp.csv'))
+writetable(struct2table(all_subs_p3),append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p3_masker_exp',num2str(experiment),'_incl_resp.csv'))

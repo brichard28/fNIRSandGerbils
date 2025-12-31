@@ -10,10 +10,11 @@ library(dplyr)
 #library(rhdf5)
 # Read the .mat file
 library(R.matlab)
-p1_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p1_target_exp1.csv')
-n1_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_n1_target_exp1.csv')
-p2_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p2_target_exp1.csv')
-p3_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p3_target_exp1.csv')
+library(emmeans)
+p1_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p1_target_exp1_incl_resp.csv')
+n1_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_n1_target_exp1_incl_resp.csv')
+p2_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p2_target_exp1_incl_resp.csv')
+p3_data <- read.csv('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/all_subs_p3_target_exp1_incl_resp.csv')
 
 names(p1_data)[names(p1_data) == "Amplitude"] <- "p1"
 names(n1_data)[names(n1_data) == "Amplitude"] <- "n1"
@@ -101,7 +102,7 @@ ggplot(parietooccipital_summary,
   ylim(c(-10,10))
 
 
-model_p1n1_exp1 <- lmer(mean_diff ~ Masker*Talker*WordType + (1|S),data= frontocentral_summary,control = lmerControl(optimizer = "bobyqa"))
+model_p1n1_exp1 <- mixed(mean_diff ~ Masker*Talker*WordType + (1|S),data= frontocentral_summary,control = lmerControl(optimizer = "bobyqa"))
 
 anova(model_p1n1_exp1)
 
@@ -112,11 +113,11 @@ pairs(em_p1n1_wordtype, adjust = "bonferroni")
 # Significant interaction between masker and talker 
 # Compare across masker at each level of talker
 em_p1n1_masker_talker <- emmeans(model_p1n1_exp1, ~ Masker * Talker)
-pairs(em_p1n1_masker_talker, by = "Talker", adjust = "bonferroni")
+pairs(em_p1n1_masker_talker, by = "Masker", adjust = "bonferroni")
 
 
 
-model_p3_exp1 <- lmer(mean_p3 ~ Masker*Talker*WordType + (1|S),data= parietooccipital_summary,control = lmerControl(optimizer = "bobyqa"))
+model_p3_exp1 <- mixed(mean_p3 ~ Masker*Talker*WordType + (1|S),data= parietooccipital_summary,control = lmerControl(optimizer = "bobyqa"))
 
 anova(model_p3_exp1)
 

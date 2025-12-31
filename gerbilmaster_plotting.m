@@ -8,6 +8,9 @@ target_color_parietooccipital_figure = figure();
 target_object_frontocentral_figure = figure();
 target_object_parietooccipital_figure = figure();
 masker_figure = figure();
+plosive_figure = figure();
+responded_figure = figure();
+
 for experiment = 1:2
     if experiment == 1
         curr_subject_ID =  char('7002','7023','7024','7033','7035','7036','7038','7039','7040','7041','7043','7044','7045','7046','7047','7048','7049','7050','7064','7081'); % NOT Amplitude modulated
@@ -479,75 +482,125 @@ for experiment = 1:2
 
 
     %% Target red/white vs. green/blue and object strong onset vs. object weak onset
-    figure;
-    subplot(1,2,1)
+    figure(plosive_figure)
+    if experiment == 1
+        subplot(1,4,1)
+    elseif experiment == 2
+        subplot(1,4,3)
+    end
     hold on
     this_scrambled_data = squeeze(mean(all_target_blue_green(:,frontocentral_channels,:),2));
     this_unscrambled_data = squeeze(mean(all_target_red_white(:,frontocentral_channels,:),2));
     shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
     shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
     ylim([-4.25,2])
-    title('Color Words','FontSize',20)
+    title('Color Words','FontSize',12)
     legend({'Blue/Green','Red/White'},'FontSize',20)
 
-    subplot(1,2,2)
+    if experiment == 1
+        subplot(1,4,2)
+    elseif experiment == 2
+        subplot(1,4,4)
+    end
     hold on
     this_scrambled_data = squeeze(mean(all_target_bag_desk_glove_pen_table_toy(:,frontocentral_channels,:),2));
     this_unscrambled_data = squeeze(mean(all_target_hat_card_chair_shoe_sock_spoon(:,frontocentral_channels,:),2));
     shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
     shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
     ylim([-4.25,2])
-    title('Object Words','FontSize',20)
+    title('Object Words','FontSize',12)
     legend({'Strong Onset','Weak Onset'},'FontSize',20)
 
-    sgtitle(append('ALL Conditions Frontocentral ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',20)
+    sgtitle('ALL Conditions Frontocentral ERP to Target Stream','FontSize',12)
+
+    % Set figure size in inches (same as R's ggsave)
+    width_in = 10;
+    height_in = 8;
+    
+    set(gcf, 'Units', 'inches', 'Position', [1 1 width_in height_in]);
+    set(gca, 'FontSize', 12); % optional for consistent appearance
+
+    % Ensure paper size matches figure size for export
+    set(gcf, 'PaperUnits', 'inches');
+    set(gcf, 'PaperPosition', [0 0 width_in height_in]);
+    set(gcf, 'PaperSize', [width_in height_in]);
+    exportgraphics(gcf, '/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/plosive_erps.svg', 'ContentType', 'vector');
 
     %% Target Frontocentral response when responded vs. not
-    figure;
-    subplot(1,2,1)
+    figure(responded_figure)
+    if experiment == 1
+        subplot(2,4,1)
+    elseif experiment == 2
+        subplot(2,4,3)
+    end
     hold on
     this_scrambled_data = squeeze(mean(all_target_color_responded(:,frontocentral_channels,:),2));
     this_unscrambled_data = squeeze(mean(all_target_color_not_responded(:,frontocentral_channels,:),2));
     shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
     shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
     ylim([-4.25,2])
-    title('Color Words','FontSize',20)
-    legend({'Responded','Did Not Respond'},'FontSize',20)
+    title('Color Words FC','FontSize',12)
+    legend({'Hit','Miss'},'FontSize',20)
 
-    subplot(1,2,2)
+    if experiment == 1
+        subplot(2,4,2)
+    elseif experiment == 2
+        subplot(2,4,4)
+    end
     hold on
     this_scrambled_data = squeeze(mean(all_target_object_responded(:,frontocentral_channels,:),2));
     this_unscrambled_data = squeeze(mean(all_target_object_not_responded(:,frontocentral_channels,:),2));
     shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
     shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
     ylim([-4.25,2])
-    title('Object Words','FontSize',20)
-    legend({'Responded (FA)','Did Not Respond'},'FontSize',20)
+    title('Object Words FC','FontSize',12)
+    legend({'False Alarm','Correct Rejection'},'FontSize',20)
 
-    sgtitle(append('ALL Conditions Frontocentral ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',20)
+    sgtitle(append('ALL Conditions Frontocentral ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',12)
 
     %% Target Parietooccipital response when responded vs. not
-    figure;
-    subplot(1,2,1)
+    if experiment == 1
+        subplot(2,4,5)
+    elseif experiment == 2
+        subplot(2,4,7)
+    end
     hold on
     this_scrambled_data = squeeze(mean(all_target_color_responded(:,parietooccipital_channels,:),2));
     this_unscrambled_data = squeeze(mean(all_target_color_not_responded(:,parietooccipital_channels,:),2));
     shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
     shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
     ylim([-4.25,2])
-    title('Color Words','FontSize',20)
-    legend({'Responded','Did Not Respond'},'FontSize',20)
+    title('Color Words PO','FontSize',12)
+    legend({'Hit','Miss'},'FontSize',20)
 
-    subplot(1,2,2)
+    if experiment == 1
+        subplot(2,4,6)
+    elseif experiment == 2
+        subplot(2,4,8)
+    end
     hold on
     this_scrambled_data = squeeze(mean(all_target_object_responded(:,parietooccipital_channels,:),2));
     this_unscrambled_data = squeeze(mean(all_target_object_not_responded(:,parietooccipital_channels,:),2));
     shadedErrorBar(single_onset_time,mean(this_scrambled_data,1),std(this_scrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'--k'})
     shadedErrorBar(single_onset_time,mean(this_unscrambled_data,1),std(this_unscrambled_data,[],1)./(sqrt(num_subjects) - 1),'lineProps',{'-k'})
     ylim([-4.25,2])
-    title('Object Words','FontSize',20)
-    legend({'Responded (FA)','Did Not Respond'},'FontSize',20)
+    title('Object Words PO','FontSize',12)
+    legend({'False Alarm','Correct Rejection'},'FontSize',20)
 
-    sgtitle(append('ALL Conditions Parietooccipital ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',20)
+    sgtitle(append('ALL Conditions Parietooccipital ERP to Target Stream Exp. ',num2str(experiment)),'FontSize',12)
+
+    % Set figure size in inches (same as R's ggsave)
+    width_in = 10;
+    height_in = 8;
+    
+    set(gcf, 'Units', 'inches', 'Position', [1 1 width_in height_in]);
+    set(gca, 'FontSize', 12); % optional for consistent appearance
+
+    % Ensure paper size matches figure size for export
+    set(gcf, 'PaperUnits', 'inches');
+    set(gcf, 'PaperPosition', [0 0 width_in height_in]);
+    set(gcf, 'PaperSize', [width_in height_in]);
+    exportgraphics(gcf, '/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/responded_erps.svg', 'ContentType', 'vector');
+
 
 end
