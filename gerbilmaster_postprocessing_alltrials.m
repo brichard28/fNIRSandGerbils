@@ -3,14 +3,14 @@
 % Set directories
 whos_using = 'Bon';
 if all(whos_using == 'Ben')
-    addpath('/home/ben/Documents/MATLAB/eeglab2023.1');
+    addpath('/home/ben/Documents/MATLAB/eeglab2025.1.0');
     dir = '/home/ben/Documents/GitHub/fNIRSandGerbils/';
     dir_fnirsandgerbils = '/home/ben/Documents/GitHub/fNIRSandGerbils/data/fNIRSandGerbils.xlsx';
 elseif all(whos_using == 'Bon')
-    addpath('C:\Users\benri\Documents\eeglab2023.1');
-    dir = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\';
-    dir_fnirsandgerbils = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
-    prepro_folder = 'C:\Users\benri\Downloads\';
+    addpath('/Users/benrichardson/MATLAB/eeglab2025.1.0');
+    dir = '/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/';
+    dir_fnirsandgerbils = '/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/fNIRSandGerbils.xlsx';
+    prepro_folder = '/Users/benrichardson/Downloads/Epochs/';
 elseif all(whos_using == 'Maa')
     dir = 'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\';
     dir_fnirsandgerbils = 'C:\Users\maana\Documents\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
@@ -27,6 +27,7 @@ elseif experiment == 2
     curr_subject_ID = char('7056','7057','7058','7059','7060','7065','7066','7067','7068','7069','7070','7071','7072','7073','7076','7077','7078','7079','7080','7082');%); % amplitude modulated masker
 end
 % Set analysis parameters
+num_erps_rejected = zeros(1,size(curr_subject_ID,1));
 erp_window_start_time = -50; % 100 ms before onset of word
 erp_window_end_time = 750; % 750 ms after onset of word
 nsubjects = size(curr_subject_ID,1);
@@ -135,6 +136,7 @@ for isubject = 1:size(curr_subject_ID,1)
             if any(abs(these_epochs(:,start_time:end_time,itrial)) > noise_thresh,'all')
                 %disp('ERP rejected')
                 continue
+                num_erps_rejected(isubject) = num_erps_rejected(isubject) + 1;
             end
 
             % Isolate ERP
@@ -175,6 +177,8 @@ for isubject = 1:size(curr_subject_ID,1)
             % Reject epochs with amplitude above +/- 100 uV
             if any(abs(these_epochs(:,start_time:end_time,itrial)) > noise_thresh,'all')
                 disp('ERP rejected')
+                num_erps_rejected(isubject) = num_erps_rejected(isubject) + 1;
+
                 continue
             end
 
@@ -406,8 +410,9 @@ for isubject = 1:size(curr_subject_ID,1)
 
 
     %% SAVE INFO FOR THIS SUBBY
-    save(append('C:\Users\benri\Downloads\Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'),'data_by_masker_onset_baselined','data_by_target_onset_baselined','data_by_button_press_baselined','data_by_button_press_near_baselined','data_by_button_press_far_baselined','ERP_info_button_press','ERP_info_masker','ERP_info_target','-v7.3')
-    save('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\ERP_totals.mat','num_target_color_responded','num_target_color_not_responded','num_target_color_responded','num_target_color_not_responded','num_target_object_responded','num_target_object_not_responded')
+    %save(append('C:\Users\benri\Downloads\Results_Subject_',string(curr_subject_ID(isubject,:)),'.mat'),'data_by_masker_onset_baselined','data_by_target_onset_baselined','data_by_button_press_baselined','data_by_button_press_near_baselined','data_by_button_press_far_baselined','ERP_info_button_press','ERP_info_masker','ERP_info_target','-v7.3')
+    %save('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\ERP_totals.mat','num_target_color_responded','num_target_color_not_responded','num_target_color_responded','num_target_color_not_responded','num_target_object_responded','num_target_object_not_responded')
 end
 
+save(append('num_erps_rejected_experiment_',num2str(experiment),'.mat'),"num_erps_rejected")
 end
