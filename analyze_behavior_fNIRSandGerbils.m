@@ -20,8 +20,8 @@ for experiment = 1:2
         fNIRSandGerbilsXL = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
         stim_file = 'C:\Users\ema36\OneDrive\Documents\LiMN Things\fNIRSandGerbils\stim\s_';
     elseif user == 'Bon'
-        fNIRSandGerbilsXL = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\fNIRSandGerbils.xlsx';
-        stim_file = 'C:\Users\benri\Documents\GitHub\fNIRSandGerbils\stim\s_';
+        fNIRSandGerbilsXL = '/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/fNIRSandGerbils.xlsx';
+        stim_file = '/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/stim/s_';
     elseif user == 'Ben'
         fNIRSandGerbilsXL = '/home/ben/Documents/GitHub/fNIRSandGerbils/data/fNIRSandGerbils.xlsx';
         stim_file = '/home/ben/Documents/GitHub/fNIRSandGerbils/stim/s_';
@@ -34,8 +34,23 @@ for experiment = 1:2
     all_subjects_click_times_scrambled = []; % create empty array for all click times (used for histograms)
     all_subjects_click_times_unscrambled = []; % create empty array for all click times (used for histograms)
 
+
+    all_nearest_click_distances_scrambled_st   = [];
+    all_nearest_click_distances_scrambled_dt   = [];
+    all_nearest_click_distances_unscrambled_st = [];
+    all_nearest_click_distances_unscrambled_dt = [];
+
     condition_names = {'scrambled_dt','scrambled_st','unscrambled_dt','unscrambled_st'};
 
+    num_removed_windows = zeros(1,size(curr_subject_ID,1));
+
+    % total masker color windows encountered, and how many were discarded
+    % due to hit/FA overlap, split by talker condition
+    num_masker_windows_total_st     = zeros(1,size(curr_subject_ID,1));
+    num_masker_windows_total_dt     = zeros(1,size(curr_subject_ID,1));
+    num_masker_windows_discarded_st = zeros(1,size(curr_subject_ID,1));
+    num_masker_windows_discarded_dt = zeros(1,size(curr_subject_ID,1));
+    
     for isubject = 1:size(curr_subject_ID,1) % For each subject....
 
         % load words  by trial for this subject
@@ -65,8 +80,8 @@ for experiment = 1:2
 
         n_trials = length(trials); % find number of trials
         threshold_window_start = 0.3; % time in seconds from onset of word for start of hit/FA windows
-        threshold_window_end = 1.5; % time in seconds from onset of word for end of hit/FA windows
-        double_click_threshold = 1.2; % distance between clicks at which it would be decided that it is a double click
+        threshold_window_end = 1.1; % 1.5 % time in seconds from onset of word for end of hit/FA windows
+        double_click_threshold = 0.8; % distance between clicks at which it would be decided that it is a double click
 
         by_subject_behavior_info(isubject).nearest_click_distances = struct(); % create structure for nearest click distances
 
@@ -153,22 +168,67 @@ for experiment = 1:2
                 hit_windows(start_index_hit_window:end_index_hit_window) = 1; % a value of 1 in the vector hit_windows indicate an area where, if a click falls, it will be counted as a hit
             end
 
+            colors_to_delete = [];
+            objects_to_delete = [];
+
             % specify false alarm windows
             for i = 1:length(current_target_object_times) % for each of the current masker times...
+                % If there is a hit window there, remove both
                 [~,start_index_FA_window] = min(abs(tVec - (current_target_object_times(i)+threshold_window_start))); % ...the false alarm window will start threshold_window_start seconds after the word onset
                 [~,end_index_FA_window] = min(abs(tVec - (current_target_object_times(i)+threshold_window_end))); % ...the false alarm window will end threshold_window_end seconds after the word onset
 
-                FA_windows(start_index_FA_window:end_index_FA_window) = 1;
+                if any(hit_windows(start_index_FA_window:end_index_FA_window) == 1)
+
+                    % Find the hit window that overlaps with it
+                    [~,closest_target_color_time_idx] = min(abs(current_target_color_times - current_target_object_times(i)));
+                    [~,start_index_hit_window] = min(abs(tVec - (current_target_color_times(closest_target_color_time_idx)+threshold_window_start))); % ...the hit window will start threshold_window_start seconds after the word onset
+                    [~,end_index_hit_window] = min(abs(tVec - (current_target_color_times(closest_target_color_time_idx)+threshold_window_end))); % ...the hit window will end threshold_window_end seconds after the word onset
+
+                    hit_windows(start_index_hit_window:end_index_hit_window) = 0;% throw out the hit window
+
+
+                    % remove the current target color and object from count
+                    colors_to_delete = [colors_to_delete closest_target_color_time_idx];
+                    objects_to_delete = [objects_to_delete i];
+
+                    num_removed_windows(isubject) = num_removed_windows(isubject) + 1;
+                else
+                    FA_windows(start_index_FA_window:end_index_FA_window) = 1;
+                end
+
             end
 
-            FA_windows(hit_windows == 1) = 0; % any time there is a hit window, there should not be an FA window
+            % Remove identified colors and objects from the current lists
+            current_target_color_times(colors_to_delete) = [];
+            current_target_object_times(objects_to_delete) = [];
+            current_target_color_words(colors_to_delete) = [];
 
-            % specify masker color windwos
+
+            % specify masker color windows
             if ismember(conditions(itrial),[3,4]) % only if it is an unscrambled masker trial
                 for i = 1:numtotalwords
                     if ismember(all_masker_word_order(itrial,i),color_words)
                         [~,start_index_masker_window] = min(abs(tVec - (wordlength*i+threshold_window_start)));
                         [~,end_index_masker_window] =  min(abs(tVec - (wordlength*i+threshold_window_end)));
+
+                        % NEW: count every masker color window encountered, and
+                        % whether it overlapped a hit/FA window (checked before
+                        % zeroing below), split by talker
+                        window_overlaps = any(hit_windows(start_index_masker_window:end_index_masker_window) == 1) || ...
+                            any(FA_windows(start_index_masker_window:end_index_masker_window) == 1);
+
+                        if conditions(itrial) == 4 % unscrambled_same_talker
+                            num_masker_windows_total_st(isubject) = num_masker_windows_total_st(isubject) + 1;
+                            if window_overlaps
+                                num_masker_windows_discarded_st(isubject) = num_masker_windows_discarded_st(isubject) + 1;
+                            end
+                        elseif conditions(itrial) == 3 % unscrambled_diff_talker
+                            num_masker_windows_total_dt(isubject) = num_masker_windows_total_dt(isubject) + 1;
+                            if window_overlaps
+                                num_masker_windows_discarded_dt(isubject) = num_masker_windows_discarded_dt(isubject) + 1;
+                            end
+                        end
+
                         masker_windows(start_index_masker_window:end_index_masker_window) = 1;
                     end
                 end
@@ -176,8 +236,6 @@ for experiment = 1:2
 
             masker_windows(hit_windows == 1) = 0;
             masker_windows(FA_windows == 1) = 0;
-
-
 
             %% Calculate number of hits and false alarms for this trial
 
@@ -201,6 +259,9 @@ for experiment = 1:2
                 else % ...if the click is not counted as either
                     clicks_not_counted = clicks_not_counted + 1;
                 end
+
+
+
 
             end
 
@@ -242,14 +303,30 @@ for experiment = 1:2
             by_subject_behavior_info(isubject).nearest_target_click_distances(itrial).value = [];
             by_subject_behavior_info(isubject).nearest_target_color_word(itrial).value = [];
             [~,nearest_click] = min(abs(all_target_click_distances),[],1); % find the nearest click to each target word
-            for i = 1:length(current_click_times)
-                if isnan(all_target_click_distances(:,i)) == ones(1,length(current_target_color_times)) % all of these clicks were before the first word
-                    nearest_click(i) = nan;
-                else
-                    by_subject_behavior_info(isubject).nearest_target_color_word(itrial).value = [by_subject_behavior_info(isubject).nearest_target_color_word(itrial).value, current_target_color_words(nearest_click(i))];
-                    by_subject_behavior_info(isubject).nearest_target_click_distances(itrial).value = [by_subject_behavior_info(isubject).nearest_target_click_distances(itrial).value, all_target_click_distances(nearest_click(i),i)];
-                end
+            if ~isempty(all_target_click_distances)
+                for i = 1:length(current_click_times)
+                    if isnan(all_target_click_distances(:,i)) == ones(1,length(current_target_color_times)) % all of these clicks were before the first word
+                        nearest_click(i) = nan;
+                    else
+                        by_subject_behavior_info(isubject).nearest_target_color_word(itrial).value = [by_subject_behavior_info(isubject).nearest_target_color_word(itrial).value, current_target_color_words(nearest_click(i))];
+                        by_subject_behavior_info(isubject).nearest_target_click_distances(itrial).value = [by_subject_behavior_info(isubject).nearest_target_click_distances(itrial).value, all_target_click_distances(nearest_click(i),i)];
+                    end
 
+                end
+            end
+
+            % accumulate this trial's click distances by Masker x Talker condition
+            % (1 = scrambled_dt, 2 = scrambled_st, 3 = unscrambled_dt, 4 = unscrambled_st)
+            this_trial_distances = by_subject_behavior_info(isubject).nearest_target_click_distances(itrial).value;
+            switch conditions(itrial)
+                case 1
+                    all_nearest_click_distances_scrambled_dt = [all_nearest_click_distances_scrambled_dt, this_trial_distances];
+                case 2
+                    all_nearest_click_distances_scrambled_st = [all_nearest_click_distances_scrambled_st, this_trial_distances];
+                case 3
+                    all_nearest_click_distances_unscrambled_dt = [all_nearest_click_distances_unscrambled_dt, this_trial_distances];
+                case 4
+                    all_nearest_click_distances_unscrambled_st = [all_nearest_click_distances_unscrambled_st, this_trial_distances];
             end
 
 
@@ -257,6 +334,54 @@ for experiment = 1:2
 
 
 
+    end
+
+    %% Proportion of masker windows discarded due to hit/FA overlap, by talker
+    prop_discarded_st = num_masker_windows_discarded_st ./ num_masker_windows_total_st;
+    prop_discarded_dt = num_masker_windows_discarded_dt ./ num_masker_windows_total_dt;
+
+    fprintf('Exp%d: mean proportion discarded, Same Talker = %.3f (SD = %.3f)\n', ...
+        experiment, mean(prop_discarded_st,'omitnan'), std(prop_discarded_st,'omitnan'))
+    fprintf('Exp%d: mean proportion discarded, Different Talker = %.3f (SD = %.3f)\n', ...
+        experiment, mean(prop_discarded_dt,'omitnan'), std(prop_discarded_dt,'omitnan'))
+
+    [~, p_talker, ~, stats_talker] = ttest(prop_discarded_st, prop_discarded_dt);
+    fprintf('Exp%d: paired t-test Same vs Different Talker, t(%d) = %.3f, p = %.4f\n', ...
+        experiment, stats_talker.df, stats_talker.tstat, p_talker)
+
+    writematrix([prop_discarded_st', prop_discarded_dt'], ...
+        append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/Masker_window_discard_proportions_exp_',num2str(experiment),'.csv'))
+
+    %% Histograms of click time relative to target word onset, by Masker x Talker
+    words_color     = [97, 156, 255] / 255;   % matches R figures: Word/Unscrambled
+    scrambled_color = [248, 118, 109] / 255;  % matches R figures: Scrambled
+
+    if experiment == 1
+        click_histogram_figure = figure('Name', 'Click Time Histograms by Condition');
+    end
+    figure(click_histogram_figure)
+
+    bin_edges = -0.5:0.05:1.5; % adjust to your actual click-distance range
+
+    talker_specs = { ...
+        'Different', all_nearest_click_distances_scrambled_dt, all_nearest_click_distances_unscrambled_dt; ...
+        'Same',      all_nearest_click_distances_scrambled_st, all_nearest_click_distances_unscrambled_st};
+
+    for italker = 1:2
+        subplot_idx = (experiment - 1) * 2 + italker; % row = Experiment, col = Talker
+        subplot(2, 2, subplot_idx)
+        hold on
+        histogram(talker_specs{italker,2}, bin_edges, 'FaceColor', scrambled_color, 'FaceAlpha', 0.5, 'EdgeColor', 'none')
+        histogram(talker_specs{italker,3}, bin_edges, 'FaceColor', words_color, 'FaceAlpha', 0.5, 'EdgeColor', 'none')
+        xline(threshold_window_start, 'k--', 'LineWidth', 1)
+        xline(threshold_window_end, 'k--', 'LineWidth', 1)
+        xlabel('Click Time Rel. to Target Word Onset (s)')
+        ylabel('Count')
+        title(sprintf('Exp%d - %s Talker', experiment, talker_specs{italker,1}))
+        if experiment == 1 && italker == 1
+            legend({'Scrambled', 'Word', 'Hit/FA window'}, 'Location', 'northeast')
+        end
+        hold off
     end
 
     %% Plotting time!
@@ -439,9 +564,17 @@ for experiment = 1:2
 
     end
 
+    writematrix(all_hitrates,append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/Scrambled_Speech_Hit_Rates_exp_',num2str(experiment),'.csv'))
+    writematrix(all_FArates,append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/Scrambled_Speech_FA_Rates_exp_',num2str(experiment),'.csv'))
+    writematrix(all_dprimes,append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/Scrambled_Speech_D_primes_exp_',num2str(experiment),'.csv'))
+    writematrix(all_Maskerrates,append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/Scrambled_Speech_Masker_rates_exp_',num2str(experiment),'.csv'))
+    writematrix(num_removed_windows,append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/Removed_windows_exp_',num2str(experiment),'.csv'))
 
-    writematrix(all_hitrates,append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_Hit_Rates_exp_',num2str(experiment),'.csv'))
-    writematrix(all_FArates,append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_FA_Rates_exp_',num2str(experiment),'.csv'))
-    writematrix(all_dprimes,append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_D_primes_exp_',num2str(experiment),'.csv'))
-    writematrix(all_Maskerrates,append('C:\Users\benri\Documents\GitHub\fNIRSandGerbils\data\Scrambled_Speech_Masker_rates_exp_',num2str(experiment),'.csv'))
+
+    fprintf('Exp%d: %d masker windows overlapped a hit window (across all subjects)\n', experiment, sum(num_masker_hit_overlaps))
+    fprintf('Exp%d: %d masker windows overlapped an FA window (across all subjects)\n', experiment, sum(num_masker_FA_overlaps))
+
+    writematrix(num_masker_hit_overlaps, append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/Masker_hit_overlaps_exp_',num2str(experiment),'.csv'))
+    writematrix(num_masker_FA_overlaps, append('/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/data/Masker_FA_overlaps_exp_',num2str(experiment),'.csv'))
+
 end

@@ -262,13 +262,102 @@ ggsave(
 )
 
 
+
+
+p <- ggplot(long_data, aes(x = x_pos, y = Value, color = Masker, fill = Masker)) +
+  
+  # Violin plots showing distribution of individual subject values
+  geom_violin(
+    aes(group = interaction(Talker, Masker)),
+    alpha = 0.3,
+    color = NA,          # remove violin outline; comment out to keep it colored
+    width = 0.18,        # controls how wide each violin is (x_pos spacing is 0.2 within a Talker)
+    trim = TRUE,         # set FALSE if you want tails to extend past min/max
+    position = "identity",
+    scale = "width"
+  ) +
+  
+  # Individual subject points, jittered slightly so they don't all overlap
+  geom_point(
+    aes(group = interaction(S, Masker)),
+    alpha = 0.4,
+    size = 1.5,
+    position = position_jitter(width = 0.03, height = 0),
+    show.legend = FALSE
+  ) +
+  
+  # GRAND-MEAN POINTS — black outline, white fill
+  geom_point(
+    data = summary_data,
+    aes(x = x_pos, y = mean_value, shape = Masker, color = Masker, fill = Masker),
+    size = 5.0,
+    stroke = 1.2,
+    inherit.aes = FALSE
+  ) +
+  
+  # GRAND-MEAN ERROR BARS — black
+  geom_errorbar(
+    data = summary_data,
+    aes(
+      x = x_pos,
+      ymin = mean_value - sem_value,
+      ymax = mean_value + sem_value, 
+      color = Masker
+    ),
+    width = 0.3,
+    size = 1.1,
+    inherit.aes = FALSE
+  ) +
+  
+  # Shapes still correspond to Masker
+  scale_shape_manual(values = shape_map) +
+  scale_color_manual(values = color_map) + 
+  scale_fill_manual(values = color_map) +
+  
+  geom_blank(aes(y = ymin)) +
+  geom_blank(aes(y = ymax)) +
+  
+  scale_x_continuous(
+    breaks = talker_positions$mean_x,
+    labels = talker_labels_wrapped
+  ) +
+  
+  labs(x = "Talker", y = "") +
+  
+  facet_grid(Measure ~ Experiment, scales = "free_y", switch = "y") +
+  
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    strip.text = element_text(size = 14, face = "bold"),
+    axis.text.x = element_text(size = 12),
+    axis.text.y = element_text(size = 12),
+    axis.title.y.left = element_text(margin = margin(l = 10), size = 14, face = "bold"),
+    axis.text.y.left = element_text(margin = margin(r = 5), size = 12),
+    panel.spacing = unit(1, "lines"),
+    plot.margin = unit(c(5,5,5,40), "pt"),
+    strip.placement = "outside"
+  )
+
+p
+
+ggsave(
+  "/Users/benrichardson/Documents/GitHub/fNIRSandGerbils/PAPER FIGURES/behavior_plot_raw_violinplot.svg",
+  p,
+  width = 8,
+  height = 8,
+  device = "svg"
+)
+
+
+
 ##### Hit Rates ####
 # Experiment 1
 model_hitrate_exp1 <- lmer(Value ~ Masker*Talker + (1|S), data = subset(long_data, Measure == "Hit Rate" & Experiment == "Exp. 1"), control = lmerControl(optimizer = "bobyqa"))
 anova(model_hitrate_exp1)
 # Significant interaction between Masker and Talker
 em_hitrate_exp1 <- emmeans(model_hitrate_exp1, ~ Masker*Talker)
-pairs(em_hitrate_exp1, by = "Masker", adjust = "bonferroni")
+pairs(em_hitrate_exp1, by = "Talker", adjust = "bonferroni")
 
 
 # Experiment 2
